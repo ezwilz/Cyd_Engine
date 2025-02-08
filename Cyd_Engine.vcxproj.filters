@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Dev-Space">
+      <UniqueIdentifier>{d3faf0d4-4e92-4f49-93da-e8bde0f111c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Dev-Space">
+      <UniqueIdentifier>{744a773c-9324-4f06-872b-3c338322771e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Variables">
+      <UniqueIdentifier>{3814d05c-3f7e-4171-bd14-d9b431cd51eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Variables">
+      <UniqueIdentifier>{245204b1-8758-465e-9c35-59ba22fafec8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Dev-Space\Components">
+      <UniqueIdentifier>{46c1186e-61d7-44dd-a009-264ad9a3a4fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Dev-Space\Components">
+      <UniqueIdentifier>{da71ce37-0d08-4c98-bc81-a83156cd39ff}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source Files\Dev-Space\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source Files\Dev-Space</Filter>
+    </ClCompile>
+    <ClCompile Include="CydGame.cpp">
+      <Filter>Source Files\Dev-Space</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector2D.cpp">
+      <Filter>Source Files\Variables</Filter>
+    </ClCompile>
+    <ClCompile Include="Character.cpp">
+      <Filter>Source Files\Dev-Space\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="InputHandler.cpp">
+      <Filter>Source Files\Variables</Filter>
+    </ClCompile>
+    <ClCompile Include="Graph.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelMap.cpp">
+      <Filter>Source Files\Dev-Space</Filter>
+    </ClCompile>
+    <ClCompile Include="UI.cpp">
+      <Filter>Source Files\Dev-Space\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="AabbCollision.h">
+      <Filter>Header Files\Variables</Filter>
+    </ClCompile>
+    <ClCompile Include="Astar.cpp">
+      <Filter>Source Files\Dev-Space\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterBehaviour.cpp">
+      <Filter>Source Files\Dev-Space\Components</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GameObject.h">
+      <Filter>Header Files\Dev-Space\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CydGame.h">
+      <Filter>Header Files\Dev-Space</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector2D.h">
+      <Filter>Header Files\Variables</Filter>
+    </ClInclude>
+    <ClInclude Include="Character.h">
+      <Filter>Header Files\Dev-Space\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelMap.h">
+      <Filter>Header Files\Dev-Space</Filter>
+    </ClInclude>
+    <ClInclude Include="InputHandler.h">
+      <Filter>Header Files\Variables</Filter>
+    </ClInclude>
+    <ClInclude Include="Graph.h">
+      <Filter>Header Files\Variables</Filter>
+    </ClInclude>
+    <ClInclude Include="UI.h">
+      <Filter>Header Files\Dev-Space\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Astar.h">
+      <Filter>Header Files\Dev-Space\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterBehaviour.h">
+      <Filter>Header Files\Dev-Space\Components</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
