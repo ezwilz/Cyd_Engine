@@ -45,9 +45,6 @@
     <ClCompile Include="Vector2D.cpp">
       <Filter>Source Files\Variables</Filter>
     </ClCompile>
-    <ClCompile Include="Character.cpp">
-      <Filter>Source Files\Dev-Space\Components</Filter>
-    </ClCompile>
     <ClCompile Include="InputHandler.cpp">
       <Filter>Source Files\Variables</Filter>
     </ClCompile>
@@ -79,9 +76,6 @@
     </ClInclude>
     <ClInclude Include="Vector2D.h">
       <Filter>Header Files\Variables</Filter>
-    </ClInclude>
-    <ClInclude Include="Character.h">
-      <Filter>Header Files\Dev-Space\Components</Filter>
     </ClInclude>
     <ClInclude Include="LevelMap.h">
       <Filter>Header Files\Dev-Space</Filter>
