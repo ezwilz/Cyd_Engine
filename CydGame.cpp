@@ -1,7 +1,7 @@
 #include "CydGame.h"
 
 void CydGame::update()
-{
+{	
 	//set the event -  only allows for one button to be pressed at a time ?? 
 	eventSDL = inputHandler.GetInput();
 	inputHandler.handleEvent(eventSDL);
@@ -10,15 +10,49 @@ void CydGame::update()
 	{
 		handleMapControl();
 		inputHandler.handleEvent(eventSDL);
-		if (inputHandler.dPressed)
-			moveTestDummy();
+
+		if (inputHandler.leftMBDown)
+			leftClickAction();
+		if (uiManager.button1Clicked)
+		{
+			button1Pressed();
+		}
+		//===============================================================================
+
+		cyd.offsetX = offsetX;
+		cyd.offsetY = offsetY;
+		cyd.update();
+
+
 	}
-	/*if (inputHandler.rightMBDown)
-		cout << "\n\nRight Clicked Through the Switch\n\nAt :" << inputHandler.getMousePosition().x << " , " << inputHandler.getMousePosition().y;*/
-	if (inputHandler.leftMBDown)
-		leftClickAction();
 	//update pause and running according to the input
 	gameState();
+
+
+	
+	//cout << "\nTarget : " << cyd.targetPosition << " Current : " << cyd.arrayPosition << "\n";
+
+	//===============================================================================
+	//60 fps cap
+	
+	SDL_Delay(24);
+}
+
+void CydGame::button1Pressed()
+{
+	if (level.house[lClickArrayPosY][lClickArrayPosX] == 0)
+	{
+		if (lClickArrayPosX < 60 && lClickArrayPosX > 0 && lClickArrayPosY < 60 && lClickArrayPosY > 0)
+		{
+			cyd.targetPosition = Vector2D(lClickArrayPosX, lClickArrayPosY);
+			cyd.pathSet = false;
+		}
+	}
+	cout << "\n\nButtonClicked\n\n";
+	uiManager.button1Clicked = false;
+	uiManager.isActive = false;
+
+	//cout << " Test Dummy Location: " << testDummyArrayPosition << "\n" << "Left Click Position: (" << lClickArrayPosX << " , " << lClickArrayPosY << ")\n";
 }
 
 void CydGame::leftClickAction()
@@ -35,13 +69,6 @@ void CydGame::leftClickAction()
 	lClickArrayPosY = (inputHandler.getMousePosition().y - offsetY) / 10;
 
 
-	if(level.house[lClickArrayPosY][lClickArrayPosX] == 0)
-		if(lClickArrayPosX < 60 && lClickArrayPosX > 0 && lClickArrayPosY < 60 && lClickArrayPosY > 0)
-			a_star.search(testDummyArrayPosition.x, testDummyArrayPosition.y, lClickArrayPosX, lClickArrayPosY);
-	
-
-	cout << " Test Dummy Location: " << testDummyArrayPosition << "\n" << "Left Click Position: (" << lClickArrayPosX << " , " << lClickArrayPosY << ")\n";
-
 	/*for (int i = 0; i < a_star.pathList.size(); i++)
 	{
 		cout << "Step " << i << ":" << a_star.pathList[i].position << "\n";
@@ -50,6 +77,7 @@ void CydGame::leftClickAction()
 	cout << "\n\n" << lClickArrayPosX << " , " << lClickArrayPosY;
 
 	cout << "\n\Left Clicked Through the Switch\n\nAt :" << inputHandler.getMousePosition().x << " , " << inputHandler.getMousePosition().y;
+	inputHandler.leftMBDown = false;
 }
 
 void CydGame::gameState()
@@ -60,30 +88,12 @@ void CydGame::gameState()
 
 void CydGame::render(SDL_Renderer* renderer)
 {
-	/*SDL_Rect rect = character1.objectGraphic;
-	SDL_SetRenderDrawColor(renderer, 124, 154, 255, 255);
-	SDL_RenderFillRect(renderer, &rect);
-	SDL_RenderDrawRect(renderer, &rect);*/
 	if (!isPaused)
 	{
 		
 		scene1(renderer);
-		/*if (!a_star.closedList.empty())
-		{
-			Vector2D x;
-
-			for (const auto& node : a_star.closedList)
-			{
-				x = arrayToRenderPosition(node.position.x, node.position.y);
-				SDL_Rect newRect = { x.x,x.y,10,10 };
-				SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-				SDL_RenderFillRect(renderer, &newRect);
-				SDL_RenderDrawRect(renderer, &newRect);
-
-			}
-		}*/
 		
-		if (!a_star.pathList.empty())
+		/*if (!a_star.pathList.empty())
 		{
 			Vector2D x;
 
@@ -96,7 +106,7 @@ void CydGame::render(SDL_Renderer* renderer)
 				SDL_RenderDrawRect(renderer, &newRect);
 
 			}
-		}
+		}*/
 
 
 	}
@@ -120,10 +130,10 @@ void CydGame::scene1(SDL_Renderer* renderer)
 	{
 		uiManager.renderUI(renderer, menuUIx, menuUIy);
 	}
-
+	
 	SDL_SetRenderDrawColor(renderer, 240, 38, 131, 255);
-	SDL_RenderFillRect(renderer, &testDummy);
-	SDL_RenderDrawRect(renderer, &testDummy);
+	SDL_RenderFillRect(renderer, &cyd.player);
+	SDL_RenderDrawRect(renderer, &cyd.player);
 }
 
 void CydGame::pauseScreen(SDL_Renderer* renderer)
@@ -136,15 +146,14 @@ void CydGame::pauseScreen(SDL_Renderer* renderer)
 
 void CydGame::updateActiveGameObjects()
 {
-	character1.update();
+	
 }
 
 void CydGame::start()
 {
 	loadLevel(level.house);
-	character1.objectGraphic.w = 60;
-	character1.objectGraphic.h = 60;
-	character1.position.y = 60;
+	cyd.offsetX = offsetX;
+	cyd.offsetY = offsetY;
 }
 
 void CydGame::createNewGameObject(string name, int x, int y, int w, int h)
@@ -168,10 +177,10 @@ void CydGame::loadLevel(int level[60][60])
 			}
 			if (level[i][j] == 4)
 			{
-				testDummy = { j * 10,i * 10, 10,10 };
-				//levelRects.push_back(testDummy);
-				testDummyArrayPosition.x = j;
-				testDummyArrayPosition.y = i;
+				cyd.player = { j * 10,i * 10, 10,10 };
+				cyd.arrayPosition.x = j;
+				cyd.arrayPosition.y = i;
+				cyd.currentPosition = Vector2D(j * 10, i * 10);
 			}
 		}
 	}
@@ -187,14 +196,15 @@ void CydGame::moveMap(int x, int y, list<SDL_Rect>& rects)
 
 	offsetX += x;
 	offsetY += y;
-
-	testDummy.x += x;
-	testDummy.y += y;
+	cyd.offsetX = offsetX;
+	cyd.offsetY = offsetY;
+	cyd.player.x += x;
+	cyd.player.y += y;
 }
 
 void CydGame::moveTestDummy()
 {
-	if (inputHandler.dPressed)
+	/*if (inputHandler.dPressed)
 	{
 		int oldy = testDummyArrayPosition.y;
 		int oldx = testDummyArrayPosition.x;
@@ -208,7 +218,7 @@ void CydGame::moveTestDummy()
 
 			int tdX = (newx * 10) + offsetX;
 			int tdY = (newy * 10) + offsetY;
-			testDummy = { tdX, tdY, 10,10 };
+			cyd.player = { tdX, tdY, 10,10 };
 
 			testDummyArrayPosition.x = newx;
 			testDummyArrayPosition.y = newy;
@@ -216,7 +226,7 @@ void CydGame::moveTestDummy()
 	
 		inputHandler.dPressed = false;
 
-	}
+	}*/
 }
 
 Vector2D CydGame::arrayToRenderPosition(int x, int y)

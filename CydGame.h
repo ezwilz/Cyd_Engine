@@ -11,6 +11,7 @@
 #include "Graph.h"
 #include "UI.h"
 #include "Astar.h"
+#include "CharacterBehaviour.h"
 
 using namespace std;
 class CydGame
@@ -22,7 +23,6 @@ private:
 	list<GameObject> activeObjects;
 	list<SDL_Rect> levelRects;
 	SDL_Rect rect1 = { 10,10,10,10 };
-	GameObject character1;
 	LevelMap level;
 	InputHandler inputHandler;
 	UI uiManager;
@@ -34,8 +34,10 @@ public:
 	int offsetX = 0;
 	int offsetY = 0;
 
-	SDL_Rect testDummy = { 10,10,10,10 };
 	Vector2D testDummyArrayPosition;
+
+	CharacterBehaviour cyd;
+	Vector2D lastClickedLocation;
 	
 	int menuUIx = 0;
 	int menuUIy = 0;
@@ -70,17 +72,13 @@ public:
 
 	void loadLevel(int level[60][60]);
 	void moveMap(int x, int y, list<SDL_Rect>& rects);
-
 	void scene1(SDL_Renderer* renderer);
 	void pauseScreen(SDL_Renderer* renderer);
-
 	void handleMapControl();
 	void gameState();
-
 	void leftClickAction();
-
+	void button1Pressed();
 	void moveTestDummy();
-
 	Vector2D arrayToRenderPosition(int x, int y);
 	Vector2D renderToArrayPosition(int x, int y);
 

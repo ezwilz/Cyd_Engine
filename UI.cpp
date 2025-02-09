@@ -24,6 +24,14 @@ void UI::renderUI(SDL_Renderer* renderer, int x, int y)
 		if (mouseHoveringButton(&button1))
 		{//red when hovering
 			SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+			if (inputHandler.GetInput().button.button == SDL_BUTTON_LEFT)
+			{
+				button1Clicked = true;
+			}
+			else
+			{
+				button1Clicked = false;
+			}
 		}
 		else
 		{//blue when not hovering 

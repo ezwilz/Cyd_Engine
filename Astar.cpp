@@ -350,6 +350,7 @@ void Astar::buildPath() {
     // the list is full of starting node and not the actual path? 
     cout << "\nAdded Start Node to Path\n";
 
+
     for (int i = 0; i < pathList.size();i++)
     {
         cout << "\n Final path position " << i << ": " << pathList[i]->position << "Parent: " << pathList[i]->parent << "\n";
