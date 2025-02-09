@@ -48,9 +48,6 @@
     <ClCompile Include="InputHandler.cpp">
       <Filter>Source Files\Variables</Filter>
     </ClCompile>
-    <ClCompile Include="Graph.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="LevelMap.cpp">
       <Filter>Source Files\Dev-Space</Filter>
     </ClCompile>
@@ -65,6 +62,9 @@
     </ClCompile>
     <ClCompile Include="CharacterBehaviour.cpp">
       <Filter>Source Files\Dev-Space\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphs.cpp">
+      <Filter>Source Files\Variables</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -83,9 +83,6 @@
     <ClInclude Include="InputHandler.h">
       <Filter>Header Files\Variables</Filter>
     </ClInclude>
-    <ClInclude Include="Graph.h">
-      <Filter>Header Files\Variables</Filter>
-    </ClInclude>
     <ClInclude Include="UI.h">
       <Filter>Header Files\Dev-Space\Components</Filter>
     </ClInclude>
@@ -94,6 +91,9 @@
     </ClInclude>
     <ClInclude Include="CharacterBehaviour.h">
       <Filter>Header Files\Dev-Space\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphs.h">
+      <Filter>Header Files\Variables</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

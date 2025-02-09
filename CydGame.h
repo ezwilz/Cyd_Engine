@@ -8,7 +8,7 @@
 #include "GameObject.h"
 #include "LevelMap.h"
 #include "InputHandler.h"
-#include "Graph.h"
+#include "Graphs.h"
 #include "UI.h"
 #include "Astar.h"
 #include "CharacterBehaviour.h"

@@ -138,7 +138,7 @@
     <ClCompile Include="Astar.cpp" />
     <ClCompile Include="CharacterBehaviour.cpp" />
     <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="Graph.cpp" />
+    <ClCompile Include="Graphs.cpp" />
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="LevelMap.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -151,7 +151,7 @@
     <ClInclude Include="CharacterBehaviour.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="CydGame.h" />
-    <ClInclude Include="Graph.h" />
+    <ClInclude Include="Graphs.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="LevelMap.h" />
     <ClInclude Include="UI.h" />

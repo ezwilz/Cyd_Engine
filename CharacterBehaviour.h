@@ -40,7 +40,7 @@ public:
 	float sleepMultiplier = 1;
 	float hygeineMultiplier = 1;
 	//timers
-	int tileSpeed = 500; // 500 ms to move one tile
+	int tileSpeed = 250; // 500 ms to move one tile
 	int lastTileMoved = 0;
 
 	void update();
