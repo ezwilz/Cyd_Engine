@@ -31,6 +31,8 @@ private:
 
 public:
 
+	Graphs thisGraph;
+
 	int offsetX = 0;
 	int offsetY = 0;
 
@@ -81,5 +83,6 @@ public:
 	void moveTestDummy();
 	Vector2D arrayToRenderPosition(int x, int y);
 	Vector2D renderToArrayPosition(int x, int y);
+	void createTheGraph();
 
 };

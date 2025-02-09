@@ -4,7 +4,8 @@
 #include <list>
 #include "Vector2D.h"
 #include "LevelMap.h"
-
+#include "Graphs.h"
+#include <vector>
 
 class CharacterBehaviour
 {
@@ -18,6 +19,10 @@ private:
 	// TODO: make a task list where the unit will work through the tasks and if its empty, they will become autonomous
 
 public:
+	//Level Memory
+	Graphs levelKnowledge;
+
+	vector<Vector2D> temporaryPathList;
 	//movement
 	LevelMap level;
 	Astar nav;
@@ -33,6 +38,9 @@ public:
 	//references
 	int offsetX;
 	int offsetY;
+
+	int currentRoom;
+	int targetRoom;
 	
 	// Behaviour
 	float foodMultiplier = 1;
@@ -49,6 +57,7 @@ public:
 	void passive();
 	bool checkNextPosition();
 	void moveToTarget();
+	void moveToGraphTarget();
 	void setNextStep();
 };
 

@@ -274,3 +274,54 @@ void CydGame::handleMapControl()
 		}
 	}
 }
+
+void CydGame::createTheGraph()
+{
+	//200's for rooms and 100's for doors
+	thisGraph.addVertex(201);
+	thisGraph.addVertex(202);
+	thisGraph.addVertex(203);
+	thisGraph.addVertex(204);
+	thisGraph.addVertex(205);
+	thisGraph.addVertex(206);
+	thisGraph.addVertex(207);
+
+	//doors
+	thisGraph.addVertex(101);
+	thisGraph.addVertex(102);
+	thisGraph.addVertex(103);
+	thisGraph.addVertex(104);
+	thisGraph.addVertex(105);
+	thisGraph.addVertex(106);
+	thisGraph.addVertex(107);
+	thisGraph.addVertex(108);
+	thisGraph.addVertex(109);
+
+	thisGraph.addEdge(201, 101);
+	thisGraph.addEdge(201, 102);
+	thisGraph.addEdge(201, 104);
+	thisGraph.addEdge(201, 105);
+	thisGraph.addEdge(201, 106);
+	thisGraph.addEdge(201, 107);
+
+	thisGraph.addEdge(202, 105);
+
+	thisGraph.addEdge(203, 102);
+	thisGraph.addEdge(203, 103);
+
+	thisGraph.addEdge(204, 101);
+	thisGraph.addEdge(204, 109);
+
+	thisGraph.addEdge(205, 109);
+
+	thisGraph.addEdge(206, 104);
+	thisGraph.addEdge(206, 108);
+
+	thisGraph.addEdge(207, 107);
+	thisGraph.addEdge(207, 108);
+
+
+	cyd.levelKnowledge.addVertex(201);
+
+
+}
