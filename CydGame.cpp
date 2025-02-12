@@ -19,6 +19,12 @@ void CydGame::update()
 		}
 		//===============================================================================
 
+		if (!cyd.levelKnowledge.CheckForVertexPresence(cyd.currentRoom))
+		{
+			cyd.levelKnowledge.CopyVertices(cyd.currentRoom, thisGraph.GetGraph());
+			cout << "\nCopying the Vertice: " << cyd.currentRoom << endl;
+		}
+
 		cyd.offsetX = offsetX;
 		cyd.offsetY = offsetY;
 		cyd.update();
@@ -154,6 +160,7 @@ void CydGame::start()
 	loadLevel(level.house);
 	cyd.offsetX = offsetX;
 	cyd.offsetY = offsetY;
+	createTheGraph();
 }
 
 void CydGame::createNewGameObject(string name, int x, int y, int w, int h)
@@ -322,6 +329,7 @@ void CydGame::createTheGraph()
 
 
 	cyd.levelKnowledge.addVertex(201);
-
-
+	cyd.levelKnowledge.CopyVertices(201, thisGraph.GetGraph());
+	cyd.levelKnowledge.createANewSpace(201, cyd.arrayPosition);
+	
 }

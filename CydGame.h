@@ -32,6 +32,7 @@ private:
 public:
 
 	Graphs thisGraph;
+	vector<Vector2D> vertexPositionsGod;
 
 	int offsetX = 0;
 	int offsetY = 0;

@@ -197,6 +197,11 @@ vector<int> Graphs::returnPath(int currentVertex, int targetVertex)
 
 	for (const auto& edge : m_graph[currentVertex])
 	{
+		if (edge == targetVertex)
+		{
+			path.push_back(edge);
+			return path;
+		}
 		for (const auto& edge2 : m_graph[edge])
 		{
 			if (edge2 == targetVertex)
@@ -263,6 +268,20 @@ void Graphs::CopyVertices(int vertex, map<int, vector<int>> graphOG)
 		if (m_graph.find(el) == m_graph.end())
 		{
 			addVertex(el);
+
+			// if the vertex is new, add a new struct version of the node on the graph. 
+			for (int i = 0; i < 60; ++i) {
+				for (int j = 0; j < 60; ++j) {
+					if (level.rooms[i][j] == el)
+					{
+						Vector2D pos = Vector2D(j, i);
+						double id = el;
+						createANewSpace(id, pos);
+					}
+				}
+			}
+
+
 		}
 		// add the connection between the vertex and the adjacent
 		addEdge(vertex, el);
@@ -284,4 +303,10 @@ int Graphs::MovingThroughDoor(int curr, int last, map<int, vector<int>>  graphOG
 	}
 	cout << "Return " << curr << endl;
 	return curr;
+}
+
+void Graphs::createANewSpace(double i, Vector2D p)
+{
+	Space newSpace = Space(i, p);
+	roomsNDoorsList.push_back(newSpace);
 }

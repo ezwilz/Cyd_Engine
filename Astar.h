@@ -18,7 +18,7 @@ private:
 	bool searching = false;
 	struct Node {
 		Vector2D position;
-		Vector2D parent = Vector2D(-1,-1); // Pointer to parent node
+		Vector2D parent = Vector2D(-1,-1); 
 		double gCost, hCost, fCost;
 
 		Node(Vector2D pos, Vector2D parentPos, double g = 0, double h = 0)

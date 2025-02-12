@@ -9,20 +9,24 @@
 
 class CharacterBehaviour
 {
-private:
+	private:
 	//Needs
 	float food = 1000;
 	float bladder = 1000;
 	float sleep = 1000;
 	float hygeine = 1000;
-
 	// TODO: make a task list where the unit will work through the tasks and if its empty, they will become autonomous
 
 public:
 	//Level Memory
 	Graphs levelKnowledge;
-
 	vector<Vector2D> temporaryPathList;
+	int tempStep = 0;
+	Vector2D temporaryTargetPosition = Vector2D(-1, -1);
+	vector<Vector2D> vertexPositions;
+	bool graphPathSet = false;
+
+
 	//movement
 	LevelMap level;
 	Astar nav;
@@ -35,6 +39,7 @@ public:
 	int nextStep = 0;
 	bool targetReached = false;
 	bool targetSet = false;
+
 	//references
 	int offsetX;
 	int offsetY;
@@ -56,8 +61,13 @@ public:
 	void setUpPath();
 	void passive();
 	bool checkNextPosition();
+	bool checkNextPositionTempList();
 	void moveToTarget();
+	void moveToTempTarget();
 	void moveToGraphTarget();
 	void setNextStep();
+
+	vector<Vector2D> getGraphPath();
+
 };
 
