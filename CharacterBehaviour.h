@@ -20,9 +20,9 @@ class CharacterBehaviour
 public:
 	//Level Memory
 	Graphs levelKnowledge;
-	vector<Vector2D> temporaryPathList;
-	int tempStep = 0;
-	Vector2D temporaryTargetPosition = Vector2D(-1, -1);
+	vector<Vector2D> roomPathList;
+	int roomStep = -1;
+	Vector2D roomTargetPosition = Vector2D(-1, -1);
 	vector<Vector2D> vertexPositions;
 	bool graphPathSet = false;
 
@@ -32,13 +32,17 @@ public:
 	Astar nav;
 	SDL_Rect player;
 	Vector2D currentPosition;
-	Vector2D targetPosition = Vector2D(-1, -1);
+	Vector2D targetFinalPosition = Vector2D(-1, -1);
 	Vector2D arrayPosition;
 	bool pathSet = false;
 	int numberOfSteps;
 	int nextStep = 0;
 	bool targetReached = false;
 	bool targetSet = false;
+
+	// will be set with final target and the room target interchangably
+	Vector2D currentTarget = Vector2D(-1, -1);
+
 
 	//references
 	int offsetX;
@@ -66,7 +70,8 @@ public:
 	void moveToTempTarget();
 	void moveToGraphTarget();
 	void setNextStep();
-
+	void getRoomTarget();
+	void navigateDoor();
 	vector<Vector2D> getGraphPath();
 
 };

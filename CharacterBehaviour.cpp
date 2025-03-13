@@ -11,34 +11,53 @@ void CharacterBehaviour::passive()
 
 bool CharacterBehaviour::checkNextPosition()
 {
+	// use the right list step/item according to how the character is navigating.
 	//Check if the next position in the array is 0, it could have changed whilst the unit is moving.
-	int x = nav.pathList[nextStep]->position.x;
-	int y = nav.pathList[nextStep]->position.y;
-	if (level.house[y][x] != 0)
-	{
-		return false;
-	}
-	else
-		return true;
-}
-bool CharacterBehaviour::checkNextPositionTempList()
-{
-	//Check if the next position in the array is 0, it could have changed whilst the unit is moving.
-	int x = nav.pathList[tempStep]->position.x;
-	int y = nav.pathList[tempStep]->position.y;
-	if (level.house[y][x] != 0)
-	{
-		return false;
-	}
-	else
-		return true;
+	
+		int x = nav.pathList[nextStep]->position.x;
+		int y = nav.pathList[nextStep]->position.y;
+	
+		if (level.house[y][x] != 0)
+		{
+			return false;
+		}
+		else
+			return true;
 }
 
+void CharacterBehaviour::navigateDoor()
+{
+	int directionX[] = { -1, 1,  0, 0 }; // Left, Right
+	int directionY[] = { 0, 0, -1, 1 }; // Up, Down
+
+	for (int i = 0; i < 4; i++) {
+		int newX = arrayPosition.x + directionX[i];
+		int newY = arrayPosition.y + directionY[i];
+
+		if (level.rooms[newY][newX] == targetRoom)
+		{
+			if (targetRoom != currentRoom)
+			{
+				roomTargetPosition = Vector2D(newX, newY);
+				cout << "\nFound the target room!\n";
+			}
+		}
+	}
+
+	cout << "roomTP then arrayP \n" << roomTargetPosition << "  " << arrayPosition << endl;
+
+	currentTarget = roomTargetPosition;
+
+	//printf("\nDOOR_RIGHT_NOW\n");
+}
 
 void CharacterBehaviour::moveToTarget()
 {
 	if (SDL_GetTicks() > (tileSpeed + lastTileMoved))
 	{
+		// use the right list step/item according to how the character is navigating.
+		
+
 		int x = arrayPosition.x;
 		int y = arrayPosition.y;
 
@@ -52,61 +71,25 @@ void CharacterBehaviour::moveToTarget()
 
 		arrayPosition = Vector2D(newX, newY);
 
-		if (currentRoom != targetRoom)
-			printf("\nNeed to refer to room graph to go there.\n");
+		//cout << "\nTarget: " << targetFinalPosition << " Current: " << arrayPosition << " Target Room: " << targetRoom << " Current Room: " << currentRoom << endl;
 
-		
 
 		nextStep -= 1;
 		lastTileMoved = SDL_GetTicks();
+
+
 	}
 
 	//Checks if we are at the target before moving anywwhere
 	checkForTarget();
 }
 
-void CharacterBehaviour::moveToTempTarget()
-{
-	if (SDL_GetTicks() > (tileSpeed + lastTileMoved))
-	{
-		int x = arrayPosition.x;
-		int y = arrayPosition.y;
 
-		int newX = nav.pathList[tempStep]->position.x;
-		int newY = nav.pathList[tempStep]->position.y;
-
-		//reset the old tile
-		level.house[y][x] = 0;
-		//set the new one
-		level.house[newY][newX] = 4;
-
-		arrayPosition = Vector2D(newX, newY);
-
-
-
-
-		tempStep -= 1;
-		lastTileMoved = SDL_GetTicks();
-	}
-
-	//Checks if we are at the target before moving anywwhere
-	//checkForTarget();
-}
-
-void CharacterBehaviour::moveToGraphTarget()
-{
-	
-}
-
-void CharacterBehaviour::setNextStep()
-{
-
-}
 bool CharacterBehaviour::checkForTarget()
 {
-	if (arrayPosition.x == targetPosition.x && arrayPosition.y == targetPosition.y)
+	if (arrayPosition.x == targetFinalPosition.x && arrayPosition.y == targetFinalPosition.y)
 	{
-		targetPosition = Vector2D(-1, -1);
+		targetFinalPosition = Vector2D(-1, -1);
 		pathSet = false;
 		nav.pathList.clear();
 		return true;
@@ -117,149 +100,172 @@ bool CharacterBehaviour::checkForTarget()
 	}
 }
 
+void CharacterBehaviour::getRoomTarget()
+{
+	// get the graph path,by checking with the graph knowledge ? 
+	// This sets the roomPathList
+	getGraphPath();
+
+	// if the roomstep is not null, proceed
+	if (roomStep != -1)
+	{
+		// the room target position is the next step in the path? 
+		roomTargetPosition = roomPathList[roomStep];
+	}
+	if (arrayPosition.x == roomPathList[roomStep].x && arrayPosition.y == roomPathList[roomStep].y)
+	{
+		roomStep -= 1;
+	}
+}
+
 void CharacterBehaviour::update()
 {
+	// SET THE CURRENT ROOMS AND TARGET ROOM
 	// set the current room
 	int xA = arrayPosition.x;
 	int yA = arrayPosition.y;
 	currentRoom = level.rooms[yA][xA];
-	int xB = targetPosition.x;
-	int yB = targetPosition.y;
+	int xB = targetFinalPosition.x;
+	int yB = targetFinalPosition.y;
 	targetRoom = level.rooms[yB][xB];
 
-	
-
-	// if target POsition is -1,-1 just return!
-	if (targetPosition.x == -1 && targetPosition.y == -1)
+	// SET THE POSITION STEP TO -1 IF THE CURRENT POSITION IS THE TARGET --  MEANS THAT THE VECTOR ERROR WONT ARISE RANDOMLY!
+	if (currentPosition == currentTarget)
 	{
+		nextStep = -1;
+	}
+	// SAME THING FOR THE ROOM STEP, SO THE NEXT ROOM ISNT BEING LOOKED FOR WHEN THERE IS NOT ONE
+	if (currentRoom == targetRoom)
+	{
+		roomStep = -1;
+	}
+
+	/*cout << "\nList of Known Rooms and Doors: ";
+	for (int i = 0; i < levelKnowledge.roomsNDoorsList.size(); i++)
+	{
+		cout << "\nRoom ID: " << levelKnowledge.roomsNDoorsList[i].iD << "\nPosition: " << levelKnowledge.roomsNDoorsList[i].position;
+	}
+	cout << "\nEnd of List\n\n\n\n";*/
+
+	//levelKnowledge.printGraph();
+	//cout << "\n\n\n";
+
+	//cout << "\n" << targetRoom << " " << currentRoom << endl;
+	
+	// if array position is the target position, reset all the values that could lead to irregular data next time around. 
+	if (arrayPosition.x == targetFinalPosition.x && arrayPosition.y == targetFinalPosition.y)
+	{
+		//reset the lists and the values!
+
+		// clear the Astar pathlist 
+		nav.pathList.clear();
+
+		// clear the room pathlist
+		roomPathList.clear();
+
+		//reset the room target position
+		roomTargetPosition = Vector2D(-1, -1);
+
+		//reset the final target position (where it was clicked)
+		targetFinalPosition = Vector2D(-1, -1);
+
+		// also set the current target to the targetfinal position ?
+		currentTarget = Vector2D(-1, -1);
+
+		//reset the nextstep and the roomstep to -1 -1 so it cannot be used in a list and if it does it will bring  up and error.
+		nextStep = -1;
+		roomStep = -1;
+
+
+		// reset pathset to false, because there is no path to be followed.
+		pathSet = false;
 		return;
 	}
 
-	if (targetRoom != currentRoom)
+	//set current target to the target final position
+	currentTarget = targetFinalPosition;
+
+
+
+	// if the target room is a door ? 
+	if (targetRoom != currentRoom && targetRoom >= 100)
 	{
-		if (tempStep == -1)
+		//cout << "Trying to go" << endl;
+		getRoomTarget();
+		if (!roomPathList.empty())
 		{
-			// assume final position is met
-			graphPathSet = false;
-			temporaryTargetPosition = Vector2D(-1, -1);
-			temporaryPathList.clear();
-			tempStep = 0;
+			currentTarget = roomTargetPosition;
 		}
-		cout << "\nTarget Room is not Current Room\n";
-		//graph movement
-		if (!graphPathSet && temporaryTargetPosition.x == -1 && temporaryTargetPosition.y == -1)
-		{
-			if (targetPosition.x != -1 && targetPosition.y != -1)
-			{
-				cout << "\nGraph path is not set, and temporary position equals -1\n";
-				cout << "\nSetting the path\n";
-				temporaryPathList = getGraphPath();
-				cout << "\nPath Set\n";
-				cout << "\nChecking if temp path list is empty\n";
-				if (!temporaryPathList.empty())
-				{
-					cout << "\nTemp List is not empty, setting the temporary target position to the step in the temporary path\n";
-					temporaryTargetPosition = temporaryPathList[tempStep];
-					cout << "\nTemp target position set\n";
-				}
-				else
-					cout << "\nTemp List is empty\n";
-
-				cout << "\nChecking if temp target position != -1, if it doesnt, then we are using Astar\n";
-				if (temporaryTargetPosition.x != -1 && temporaryTargetPosition.y != -1)
-				{
-					cout << "\nTemp Target Position != -1\n";
-					nav.search(arrayPosition.x, arrayPosition.y, temporaryTargetPosition.x, temporaryTargetPosition.y);
-					cout << "\nTroom: " << targetRoom << "\nTarget Position: " << targetPosition << "\nTemp target position: " << temporaryTargetPosition << "\nCurrent position: " << arrayPosition << endl;
-				}
-				else
-					cout << "\nTemp target postion == -1\n";
-
-				graphPathSet = true;
-			}
-		}
-
-		// Check that the next position is free
-		cout << "\Checking if the path is set\n";
-		if (graphPathSet) {
-			cout << "\nPath is set\n";
-			cout << "\nChecking availability of the next tile\n";
-			checkNextPositionTempList();
-			cout << "\nMoving to the next step in the Astar path finding\n";
-			// move to the new position
-			moveToTempTarget();
-		}
-		else
-			cout << "\nPath is not set\n";
-
-		
-		
-		//levelKnowledge.printGraph();
 	}
-	else
+
+	if (currentRoom < 199 && targetRoom != 0)
 	{
-		if (graphPathSet)
-		{
-			graphPathSet = false;
-			temporaryTargetPosition = Vector2D(-1, -1);
-			temporaryPathList.clear();
-		}
-		temporaryTargetPosition = Vector2D(-1, -1);
-		
-		if (targetPosition.x == arrayPosition.x && targetPosition.y == arrayPosition.y)
-		{
-			cout << "Target has been met.";
-			targetPosition = Vector2D(-1, -1);
-			return;
-		}
-		// if the path is not set and the target position is not -1,-1, search for the path
-		if (!pathSet && targetPosition.x != -1 && targetPosition.y != -1)
-		{
-			setUpPath();
-		}
+		navigateDoor();
+	}
 
-
-	// Check that the next position is free
-		checkNextPosition();
-
-		// move to the new position
-		moveToTarget();
+	if (arrayPosition.x == currentTarget.x && arrayPosition.y == currentTarget.y)
+	{
+		// this is not supposed to happen
+		return;
 	}
 	
+
+	if (!pathSet && currentTarget.x != -1 && currentTarget.y != -1 && arrayPosition.x != targetFinalPosition.x && arrayPosition.y != targetFinalPosition.y)
+	{
+		
+		cout << "\nSetting Up the Path\n";
+			setUpPath();	
+	}
+
+	//cout << "\n Current Target: " << currentTarget << " Final target Position: " << targetFinalPosition << " Current Position: " << arrayPosition << endl;
+
+	if (!nav.pathList.empty())
+	{
+		checkNextPosition();
+		moveToTarget();
+	}
 
 	currentPosition.x = (arrayPosition.x * 10) + offsetX;
 	currentPosition.y = (arrayPosition.y * 10) + offsetY;
 
 	player.x = currentPosition.x;
 	player.y = currentPosition.y;
-	//cout << "\n Current Position: " << currentPosition << " Array Position: " << arrayPosition << " TargetPosition: " << targetPosition << "\n";
+
+
 }
 
 void CharacterBehaviour::setUpPath()
 {
-	nav.search(arrayPosition.x, arrayPosition.y, targetPosition.x, targetPosition.y);
+	nav.search(arrayPosition.x, arrayPosition.y, currentTarget.x, currentTarget.y);
 
-	nextStep = nav.pathList.size() - 1;
+	nextStep = nav.pathList.size() -1;
 
 	pathSet = true;
 }
 
 vector<Vector2D> CharacterBehaviour::getGraphPath()
 {
-	temporaryPathList.clear();
+	//room path list clear
+	roomPathList.clear();
+
+	//get the path from the levelknowledge.return path which looks for the path between the two rooms.
 	vector<int> numberedPath = levelKnowledge.returnPath(currentRoom, targetRoom);
+
+	// for each room in the numberedPath(the path from roomA to B)
 	for (int o : numberedPath)
 	{
+		// find the poisiton of the rooms/ doors 
 		for (int i = 0; i < levelKnowledge.roomsNDoorsList.size(); i++)
 		{
+			// the positions are stored in the rooms n doors list with an id ... ?
 			if (levelKnowledge.roomsNDoorsList[i].iD == o)
 			{
-				temporaryPathList.push_back(levelKnowledge.roomsNDoorsList[i].position);
+				roomPathList.push_back(levelKnowledge.roomsNDoorsList[i].position);
 			}
 		}
 	}
-	tempStep = temporaryPathList.size() - 1;
+	roomStep = roomPathList.size() - 1;
 
-	return temporaryPathList;
+	return roomPathList;
 }
 

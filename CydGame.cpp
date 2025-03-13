@@ -50,7 +50,7 @@ void CydGame::button1Pressed()
 	{
 		if (lClickArrayPosX < 60 && lClickArrayPosX > 0 && lClickArrayPosY < 60 && lClickArrayPosY > 0)
 		{
-			cyd.targetPosition = Vector2D(lClickArrayPosX, lClickArrayPosY);
+			cyd.targetFinalPosition = Vector2D(lClickArrayPosX, lClickArrayPosY);
 			cyd.pathSet = false;
 		}
 	}

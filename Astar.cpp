@@ -320,6 +320,7 @@ void Astar::buildPath() {
     currentNode.position = finalNode.position;
     currentNode.parent = finalNode.parent;
     cout << "\nReconstructing Path\n";
+    cout << "\n Target Position: " << targetPosition.position << "\nCurrentPosition: " << currentPosition.position << endl;
     cout << "Final Node: (" << finalNode.position.x << ", " << finalNode.position.y << ")\n";
 
     //THIS STOPS AT THE PENULTIMATE NODE AND SAYS THAT NODE IS ITS OWN PARENT
