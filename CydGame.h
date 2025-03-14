@@ -29,10 +29,18 @@ private:
 
 	Astar a_star;
 
+
+	struct Door {
+		int id = -1;
+		Vector2D location = Vector2D(-1, -1);
+	};
+
+
+
 public:
 
 	Graphs thisGraph;
-	vector<Vector2D> vertexPositionsGod;
+	vector<Door> doors;
 
 	int offsetX = 0;
 	int offsetY = 0;
@@ -85,5 +93,7 @@ public:
 	Vector2D arrayToRenderPosition(int x, int y);
 	Vector2D renderToArrayPosition(int x, int y);
 	void createTheGraph();
+	void locateAllDoors(int level[60][60]);
+
 
 };

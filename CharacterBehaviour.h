@@ -10,6 +10,7 @@
 class CharacterBehaviour
 {
 	private:
+
 	//Needs
 	float food = 1000;
 	float bladder = 1000;
@@ -17,22 +18,35 @@ class CharacterBehaviour
 	float hygeine = 1000;
 	// TODO: make a task list where the unit will work through the tasks and if its empty, they will become autonomous
 
+	struct Door {
+		int id = -1;
+		Vector2D location = Vector2D(-1, -1);
+	};
+
 public:
+
 	//Level Memory
 	Graphs levelKnowledge;
-	vector<Vector2D> roomPathList;
-	int roomStep = -1;
-	Vector2D roomTargetPosition = Vector2D(-1, -1);
+	vector<int> roomPathList;
+	int roomPathStep = -1;
+	//Vector2D doorTargetPosition = Vector2D(-1, -1);
+	//Vector2D roomTargetFromDoor = Vector2D(-1, -1);
+
+
 	vector<Vector2D> vertexPositions;
 	bool graphPathSet = false;
+	bool roomFound = false;
 
-
+	//DOORS STUFF
+	vector<Door> doors;
 	//movement
 	LevelMap level;
 	Astar nav;
+
 	SDL_Rect player;
+
 	Vector2D currentPosition;
-	Vector2D targetFinalPosition = Vector2D(-1, -1);
+	Vector2D targetPosition = Vector2D(-1, -1);
 	Vector2D arrayPosition;
 	bool pathSet = false;
 	int numberOfSteps;
@@ -60,19 +74,19 @@ public:
 	int tileSpeed = 250; // 500 ms to move one tile
 	int lastTileMoved = 0;
 
-	void update();
+	void update(map<int, vector<int>> graphOG);
 	bool checkForTarget();
-	void setUpPath();
+	void setUpPath(Vector2D tar);
 	void passive();
 	bool checkNextPosition();
-	bool checkNextPositionTempList();
 	void moveToTarget();
-	void moveToTempTarget();
-	void moveToGraphTarget();
-	void setNextStep();
 	void getRoomTarget();
 	void navigateDoor();
-	vector<Vector2D> getGraphPath();
+
+	void sameRoomProcess();
+	void differentRoomProcess(map<int, vector<int>> graphOG);
+
+	void createNewDoor(int iD, Vector2D loco);
 
 };
 

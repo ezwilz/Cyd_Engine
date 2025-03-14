@@ -19,24 +19,19 @@ void CydGame::update()
 		}
 		//===============================================================================
 
-		if (!cyd.levelKnowledge.CheckForVertexPresence(cyd.currentRoom))
-		{
-			cyd.levelKnowledge.CopyVertices(cyd.currentRoom, thisGraph.GetGraph());
-			cout << "\nCopying the Vertice: " << cyd.currentRoom << endl;
-		}
-
 		cyd.offsetX = offsetX;
 		cyd.offsetY = offsetY;
-		cyd.update();
+
+		cyd.update(thisGraph.GetGraph());
 
 
 	}
 	//update pause and running according to the input
 	gameState();
-
-
 	
-	//cout << "\nTarget : " << cyd.targetPosition << " Current : " << cyd.arrayPosition << "\n";
+
+
+
 
 	//===============================================================================
 	//60 fps cap
@@ -50,7 +45,7 @@ void CydGame::button1Pressed()
 	{
 		if (lClickArrayPosX < 60 && lClickArrayPosX > 0 && lClickArrayPosY < 60 && lClickArrayPosY > 0)
 		{
-			cyd.targetFinalPosition = Vector2D(lClickArrayPosX, lClickArrayPosY);
+			cyd.targetPosition = Vector2D(lClickArrayPosX, lClickArrayPosY);
 			cyd.pathSet = false;
 		}
 	}
@@ -74,6 +69,10 @@ void CydGame::leftClickAction()
 	lClickArrayPosX = (inputHandler.getMousePosition().x - offsetX) / 10;
 	lClickArrayPosY = (inputHandler.getMousePosition().y - offsetY) / 10;
 
+	cout << "\Cyd Graph: ";
+	cyd.levelKnowledge.printGraph();
+	cout << "\nThis Graph: ";
+	thisGraph.printGraph();
 
 	/*for (int i = 0; i < a_star.pathList.size(); i++)
 	{
@@ -160,7 +159,9 @@ void CydGame::start()
 	loadLevel(level.house);
 	cyd.offsetX = offsetX;
 	cyd.offsetY = offsetY;
+	//cyd.setGame(*this);
 	createTheGraph();
+	locateAllDoors(level.rooms);
 }
 
 void CydGame::createNewGameObject(string name, int x, int y, int w, int h)
@@ -188,6 +189,18 @@ void CydGame::loadLevel(int level[60][60])
 				cyd.arrayPosition.x = j;
 				cyd.arrayPosition.y = i;
 				cyd.currentPosition = Vector2D(j * 10, i * 10);
+			}
+		}
+	}
+}
+
+void CydGame::locateAllDoors(int level[60][60])
+{
+	for (int i = 0; i < 60; ++i) {
+		for (int j = 0; j < 60; ++j) {
+			if (level[i][j] > 100 && level[i][j] < 200)
+			{
+				cyd.createNewDoor(level[i][j], Vector2D(j, i));
 			}
 		}
 	}
