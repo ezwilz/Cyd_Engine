@@ -7,6 +7,8 @@
 #include "Graphs.h"
 #include <vector>
 
+using namespace std;
+
 class CharacterBehaviour
 {
 	private:
@@ -31,7 +33,7 @@ public:
 	int roomPathStep = -1;
 	//Vector2D doorTargetPosition = Vector2D(-1, -1);
 	//Vector2D roomTargetFromDoor = Vector2D(-1, -1);
-
+	Vector2D subTarget = Vector2D(-1, -1);
 
 	vector<Vector2D> vertexPositions;
 	bool graphPathSet = false;
@@ -71,7 +73,7 @@ public:
 	float sleepMultiplier = 1;
 	float hygeineMultiplier = 1;
 	//timers
-	int tileSpeed = 250; // 500 ms to move one tile
+	int tileSpeed = 100; // 500 ms to move one tile
 	int lastTileMoved = 0;
 
 	void update(map<int, vector<int>> graphOG);

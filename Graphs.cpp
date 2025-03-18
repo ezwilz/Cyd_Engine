@@ -209,7 +209,8 @@ vector<int> Graphs::returnPath(int currentVertex, int targetVertex)
 				if (edge2 != currentVertex)
 				{
 					cout << "Path: " << edge << ", " << edge2 << "\n";
-					path.push_back(edge & edge2);
+					path.push_back(edge2);
+					path.push_back(edge);
 					return path;
 				}
 			}
@@ -221,7 +222,11 @@ vector<int> Graphs::returnPath(int currentVertex, int targetVertex)
 					if (edge2 != currentVertex)
 					{
 						cout << "Path: " << edge << ", " << edge2 << ", " << edge3 << "\n";
-						path.push_back(edge & edge2 & edge3);
+						
+						path.push_back(edge3);
+						path.push_back(edge2);
+						path.push_back(edge);
+						
 						return path;
 					}
 				}
@@ -233,7 +238,11 @@ vector<int> Graphs::returnPath(int currentVertex, int targetVertex)
 						if (edge2 != currentVertex)
 						{
 							cout << "Path: " << edge << ", " << edge2 << ", " << edge3 << ", " << edge4 << "\n";
-							path.push_back(edge & edge2 & edge3 & edge4);
+							path.push_back(edge4);
+							path.push_back(edge3);
+							path.push_back(edge2);
+							path.push_back(edge);
+							
 							return path;
 						}
 					}
@@ -262,29 +271,25 @@ map<int, vector<int>>  Graphs::GetGraph()
 void Graphs::CopyVertices(int vertex, map<int, vector<int>> graphOG)
 {
 	// add each edge from the vertex to the memory graph.
+
 	for (const auto& el : graphOG[vertex])
 	{
 		// If the vertex doesn't exist yet, add it to the memory graph.
 		if (m_graph.find(el) == m_graph.end())
 		{
-			addVertex(el);
+			if (!CheckForVertexPresence(el))
+			{
+				addVertex(el);
+			}
+			
 
 			// if the vertex is new, add a new struct version of the node on the graph. 
-			for (int i = 0; i < 60; ++i) {
-				for (int j = 0; j < 60; ++j) {
-					if (level.rooms[i][j] == el)
-					{
-						Vector2D pos = Vector2D(j, i);
-						double id = el;
-						createANewSpace(id, pos);
-					}
-				}
-			}
-
-
 		}
 		// add the connection between the vertex and the adjacent
-		addEdge(vertex, el);
+		if (!CheckConnection(vertex, el))
+		{
+			addEdge(vertex, el);
+		}
 	}
 }
 
