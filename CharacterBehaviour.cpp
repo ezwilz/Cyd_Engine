@@ -94,6 +94,10 @@ void CharacterBehaviour::update(map<int, vector<int>> graphOG)
 
 	if (targetRoom == currentRoom)
 	{
+		if (!roomPathList.empty())
+		{
+			roomPathList.clear();
+		}
 		graphPathSet = false;
 		cout << "\nTargetRoom reached, path reset\n";
 		
@@ -136,6 +140,7 @@ void CharacterBehaviour::update(map<int, vector<int>> graphOG)
 	//if the target is in the same room follow one process or else do the graph process !
 	if (targetRoom == currentRoom)
 	{
+		
 		cout << "\nTesting it gets this far! 4.1\n";
 		sameRoomProcess();
 	}
@@ -249,7 +254,7 @@ void CharacterBehaviour::differentRoomProcess(map<int, vector<int>> graphOG) {
 		cout << "\nRoom path is not empty\n"; 
 		cout << "\Sub Tar Pos: " << subTarget << " Current Pos: " << arrayPosition  << " Target Pos: " << targetPosition << endl;
 
-
+		//L0O7
 		for (int i = roomPathList.size() -1; i > -1; i--)
 		{
 			cout << i << " : " << roomPathList[i] << " Target Room: " << targetRoom << endl;;
