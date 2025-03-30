@@ -66,6 +66,9 @@
     <ClCompile Include="Graphs.cpp">
       <Filter>Source Files\Variables</Filter>
     </ClCompile>
+    <ClCompile Include="RoomAlgorithm.cpp">
+      <Filter>Source Files\Variables</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h">
@@ -93,6 +96,9 @@
       <Filter>Header Files\Dev-Space\Components</Filter>
     </ClInclude>
     <ClInclude Include="Graphs.h">
+      <Filter>Header Files\Variables</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomAlgorithm.h">
       <Filter>Header Files\Variables</Filter>
     </ClInclude>
   </ItemGroup>

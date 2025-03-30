@@ -13,7 +13,7 @@ using namespace std;
 class Graphs
 {
 private:
-	map<int, vector<int>> m_graph;
+	
 	list<int> knownVertices;
 
 	LevelMap level;
@@ -30,6 +30,8 @@ private:
 
 
 public:
+	map<int, vector<int>> m_graph;
+
 	vector<Space> roomsNDoorsList;
 
 	Graphs() {}

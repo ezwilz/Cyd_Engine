@@ -162,6 +162,9 @@ void CydGame::start()
 	//cyd.setGame(*this);
 	createTheGraph();
 	locateAllDoors(level.rooms);
+	cyd.roomAlg.levelKnowledge = &cyd.levelKnowledge;
+	cyd.roomAlg.currentPosition = &cyd.arrayPosition;
+	cyd.roomAlg.targetPosition = &cyd.targetPosition;
 }
 
 void CydGame::createNewGameObject(string name, int x, int y, int w, int h)
@@ -200,7 +203,7 @@ void CydGame::locateAllDoors(int level[60][60])
 		for (int j = 0; j < 60; ++j) {
 			if (level[i][j] > 100 && level[i][j] < 200)
 			{
-				cyd.createNewDoor(level[i][j], Vector2D(j, i));
+				cyd.roomAlg.createNewDoor(level[i][j], Vector2D(j, i));
 			}
 		}
 	}

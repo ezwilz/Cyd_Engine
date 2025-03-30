@@ -6,6 +6,7 @@
 #include "LevelMap.h"
 #include "Graphs.h"
 #include <vector>
+#include "RoomAlgorithm.h"
 
 using namespace std;
 
@@ -26,21 +27,23 @@ class CharacterBehaviour
 	};
 
 public:
+	RoomAlgorithm roomAlg;
+
 
 	//Level Memory
 	Graphs levelKnowledge;
-	vector<int> roomPathList;
-	int roomPathStep = -1;
-	//Vector2D doorTargetPosition = Vector2D(-1, -1);
-	//Vector2D roomTargetFromDoor = Vector2D(-1, -1);
-	Vector2D subTarget = Vector2D(-1, -1);
+	//vector<int> roomPathList;
+	//int roomPathStep = -1;
+	////Vector2D doorTargetPosition = Vector2D(-1, -1);
+	////Vector2D roomTargetFromDoor = Vector2D(-1, -1);
+	//Vector2D subTarget = Vector2D(-1, -1);
 
-	vector<Vector2D> vertexPositions;
-	bool graphPathSet = false;
-	bool roomFound = false;
+	//vector<Vector2D> vertexPositions;
+	//bool graphPathSet = false;
+	//bool roomFound = false;
 
 	//DOORS STUFF
-	vector<Door> doors;
+	//vector<Door> doors;
 	//movement
 	LevelMap level;
 	Astar nav;
