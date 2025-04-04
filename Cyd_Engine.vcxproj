@@ -143,6 +143,7 @@
     <ClCompile Include="LevelMap.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="CydGame.cpp" />
+    <ClCompile Include="Room.cpp" />
     <ClCompile Include="RoomAlgorithm.cpp" />
     <ClCompile Include="UI.cpp" />
     <ClCompile Include="Vector2D.cpp" />
@@ -155,6 +156,7 @@
     <ClInclude Include="Graphs.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="LevelMap.h" />
+    <ClInclude Include="Room.h" />
     <ClInclude Include="RoomAlgorithm.h" />
     <ClInclude Include="UI.h" />
     <ClInclude Include="Vector2D.h" />

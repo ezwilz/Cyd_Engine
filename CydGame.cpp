@@ -2,6 +2,12 @@
 
 void CydGame::update()
 {	
+
+	
+	/*for (auto& e : rooms)
+	{
+		cout << endl << e.id << " Objects Contained: " << e.containedObjects.size();
+	}*/
 	//set the event -  only allows for one button to be pressed at a time ?? 
 	eventSDL = inputHandler.GetInput();
 	inputHandler.handleEvent(eventSDL);
@@ -22,17 +28,10 @@ void CydGame::update()
 		cyd.offsetX = offsetX;
 		cyd.offsetY = offsetY;
 
-		cyd.update(thisGraph.GetGraph());
-
-
+		cyd.update(thisGraph.GetGraph(),&rooms);
 	}
 	//update pause and running according to the input
 	gameState();
-	
-
-
-
-
 	//===============================================================================
 	//60 fps cap
 	
@@ -131,11 +130,39 @@ void CydGame::scene1(SDL_Renderer* renderer)
 		SDL_RenderDrawRect(renderer, &element);
 
 	}
+	for (auto& element : objects)
+	{
+		if (element.getType() == 10)
+		{
+			// fridge colour
+			SDL_SetRenderDrawColor(renderer, 207, 206, 203, 255);
+		}
+		if (element.getType() == 20)
+		{
+			//bed colour
+			SDL_SetRenderDrawColor(renderer, 133, 29, 29, 255);
+		}
+		if (element.getType() == 30)
+		{
+			//shower colour
+			SDL_SetRenderDrawColor(renderer, 62, 137, 224, 255);
+		}
+		if (element.getType() == 40)
+		{
+			//toilet colour
+			SDL_SetRenderDrawColor(renderer, 143, 63, 24, 255);
+		}
+		SDL_RenderFillRect(renderer, &element.rect);
+		SDL_RenderDrawRect(renderer, &element.rect);
+
+	}
 	if (uiManager.isActive)
 	{
 		uiManager.renderUI(renderer, menuUIx, menuUIy);
 	}
 	
+	cyd.renderNeedBars(renderer);
+
 	SDL_SetRenderDrawColor(renderer, 240, 38, 131, 255);
 	SDL_RenderFillRect(renderer, &cyd.player);
 	SDL_RenderDrawRect(renderer, &cyd.player);
@@ -156,11 +183,10 @@ void CydGame::updateActiveGameObjects()
 
 void CydGame::start()
 {
+	createTheGraph();
 	loadLevel(level.house);
 	cyd.offsetX = offsetX;
 	cyd.offsetY = offsetY;
-	//cyd.setGame(*this);
-	createTheGraph();
 	locateAllDoors(level.rooms);
 	cyd.roomAlg.levelKnowledge = &cyd.levelKnowledge;
 	cyd.roomAlg.currentPosition = &cyd.arrayPosition;
@@ -169,29 +195,44 @@ void CydGame::start()
 
 void CydGame::createNewGameObject(string name, int x, int y, int w, int h)
 {
-	GameObject obj;
-	obj.position.x = x;
-	obj.position.y = y;
-	obj.objectGraphic.w = w;
-	obj.objectGraphic.h = h;
-	activeObjects.push_back(obj);
+	
 }
 
-void CydGame::loadLevel(int level[60][60])
+void CydGame::loadLevel(int levelArray[60][60])
 {
 	for (int i = 0; i < 60; ++i) {
 		for (int j = 0; j < 60; ++j) {
-			if (level[i][j] == 1)
+			if (levelArray[i][j] == 1)
 			{
 				SDL_Rect newRect = { j * 10,i * 10, 10,10 };
 				levelRects.push_back(newRect);
 			}
-			if (level[i][j] == 4)
+			if (levelArray[i][j] == 4)
 			{
 				cyd.player = { j * 10,i * 10, 10,10 };
 				cyd.arrayPosition.x = j;
 				cyd.arrayPosition.y = i;
 				cyd.currentPosition = Vector2D(j * 10, i * 10);
+			}
+			if (levelArray[i][j] > 9)
+			{
+				idTemplate += 1;
+				GameObject obj = GameObject(idTemplate, levelArray[i][j], Vector2D(j, i));
+				obj.rect.x = j * 10;
+				obj.rect.y = i * 10;
+				objects.push_back(obj);
+
+
+				for (auto& element : rooms)
+				{
+
+					if (element.id == level.rooms[i][j])
+					{
+
+						element.containedObjects.push_back(obj);
+						break;
+					}
+				}
 			}
 		}
 	}
@@ -209,14 +250,18 @@ void CydGame::locateAllDoors(int level[60][60])
 	}
 }
 
-void CydGame::moveMap(int x, int y, list<SDL_Rect>& rects)
+void CydGame::moveMap(int x, int y, list<SDL_Rect>& rects, vector<GameObject>& obs)
 {
 	for (auto& element : rects)
 	{
 		element.x += x;
 		element.y += y;
 	}
-
+	for (auto& element : obs)
+	{
+		element.rect.x += x;
+		element.rect.y += y;
+	}
 	offsetX += x;
 	offsetY += y;
 	cyd.offsetX = offsetX;
@@ -278,22 +323,22 @@ void CydGame::handleMapControl()
 
 		// Move map up if mouse Y position is greater than 360
 		if (mouseY > appHeight - 40) {
-			moveMap(0, -10, levelRects);
+			moveMap(0, -10, levelRects, objects);
 		}
 
 		// Move map down if mouse Y position is less than 40
 		if (mouseY < 40) {
-			moveMap(0, 10, levelRects);
+			moveMap(0, 10, levelRects, objects);
 		}
 
 		// Move map left if mouse X position is less than 40
 		if (mouseX < 40) {
-			moveMap(10, 0, levelRects);
+			moveMap(10, 0, levelRects, objects);
 		}
 
 		// Move map right if mouse X position is greater than 560
 		if (mouseX > appWidth - 40) {
-			moveMap(-10, 0, levelRects);
+			moveMap(-10, 0, levelRects, objects);
 		}
 	}
 }
@@ -302,12 +347,32 @@ void CydGame::createTheGraph()
 {
 	//200's for rooms and 100's for doors
 	thisGraph.addVertex(201);
+	Room r1 = Room(201);
+	rooms.push_back(r1);
+
 	thisGraph.addVertex(202);
+	Room r2 = Room(202);
+	rooms.push_back(r2);
+
 	thisGraph.addVertex(203);
+	Room r3 = Room(203);
+	rooms.push_back(r3);
+
 	thisGraph.addVertex(204);
+	Room r4 = Room(204);
+	rooms.push_back(r4);
+
 	thisGraph.addVertex(205);
+	Room r5 = Room(205);
+	rooms.push_back(r5);
+
 	thisGraph.addVertex(206);
+	Room r6 = Room(206);
+	rooms.push_back(r6);
+
 	thisGraph.addVertex(207);
+	Room r7 = Room(207);
+	rooms.push_back(r7);
 
 	//doors
 	thisGraph.addVertex(101);

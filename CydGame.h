@@ -12,6 +12,7 @@
 #include "UI.h"
 #include "Astar.h"
 #include "CharacterBehaviour.h"
+#include "Room.h"
 
 using namespace std;
 class CydGame
@@ -38,6 +39,10 @@ private:
 
 
 public:
+
+	int idTemplate = 500;
+	vector<Room> rooms;
+	vector<GameObject> objects;
 
 	Graphs thisGraph;
 	vector<Door> doors;
@@ -66,9 +71,7 @@ public:
 	void setPause(bool o) { isPaused = o; };
 	bool getPause() { return isPaused; };
 
-
 	int mouseX, mouseY;
-
 
 	void setRunning(bool t) { isRunning = t; }
 	bool getRunning() { return isRunning; }
@@ -78,11 +81,9 @@ public:
 	void render(SDL_Renderer* renderer);
 
 	void createNewGameObject(string name, int x, int y, int w, int h);
-	
 	void updateActiveGameObjects();
-
-	void loadLevel(int level[60][60]);
-	void moveMap(int x, int y, list<SDL_Rect>& rects);
+	void loadLevel(int levelArray[60][60]);
+	void moveMap(int x, int y, list<SDL_Rect>& rects, vector<GameObject>& obs);
 	void scene1(SDL_Renderer* renderer);
 	void pauseScreen(SDL_Renderer* renderer);
 	void handleMapControl();

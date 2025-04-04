@@ -1,22 +1,46 @@
 #pragma once
+using namespace std;
 #include "Vector2D.h"
 #include <SDL.h>
+#include "string.h"
 class GameObject
 {
-public:
-	Vector2D position;
-	SDL_Rect objectGraphic = { 10,10,10,10 };
-	SDL_Texture* objectTexture;
-	//string name;
-	
-	void update()
-	{
-		position.x++;
-		objectGraphic.x = position.x;
-		objectGraphic.y = position.y;
+private:
 
-		
-	}
-	
+	//Uniquie ID for targeting this specific object
+	int id = -1;
+	// type refers to 1 = fridge 2 = bed etc. 
+	int type = -1;
+	// stat refers to which stat it affects 1= energy 2=hunger etc. 
+	int stat = -1;
+	// duration refers to the time it takes to complete this objects action in seconds
+	int duration = -1;
+	// for text renderings in game !
+	string name = " ";
+	Vector2D location = Vector2D(-1, -1);
+
+public:
+
+	GameObject(int i,int t,  Vector2D l);
+
+	SDL_Rect rect = { 10,10,10,10 };
+
+	bool affectsHunger, affectsBladder, affectsSleep, affectsHygiene = false;
+
+	int hungerModifier, sleepModifier, bladderModifier, hygieneModifer = 0;
+
+	void setType(int t);
+	void setStat(int s);
+	void setName(string n);
+	void setLocation(Vector2D l);
+	void setDuration(int d);
+	void setId(int i);
+
+	int getType();
+	int getStat();
+	string getName();
+	Vector2D getLocation();
+	int getDuration();
+	int getId();
 };
 

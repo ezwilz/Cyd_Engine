@@ -7,8 +7,52 @@ void CharacterBehaviour::passive()
 	bladder -= 0.5 * bladderMultiplier;
 	hygeine -= 0.5 * hygeineMultiplier;
 	sleep -= 0.5 * sleepMultiplier;
-} 
 
+	if (food < 0)
+		food = 0;
+	else if (food > maxNeedBar)
+		food = maxNeedBar;
+
+	if (bladder < 0)
+		bladder = 0;
+	else if (bladder > maxNeedBar)
+		bladder = maxNeedBar;
+
+	if (hygeine < 0)
+		hygeine = 0;
+	else if (food > maxNeedBar)
+		hygeine = maxNeedBar;
+
+	if (sleep < 0)
+		sleep = 0;
+	else if (food > maxNeedBar)
+		sleep = maxNeedBar;
+
+
+}
+
+void CharacterBehaviour::update(map<int, vector<int>> graphOG, vector<Room>* rList)
+{
+	//NEEDS
+	passive();
+	handleNeedBars();
+	checkNeeds();
+	pathFinding(graphOG, rList);
+	handleTasks();
+
+	if (!taskList.empty())
+	{
+		cout << "\nTask:" << taskList.front().targetObject.getName() << endl;
+	}
+	
+
+	currentPosition.x = (arrayPosition.x * 10) + offsetX;
+	currentPosition.y = (arrayPosition.y * 10) + offsetY;
+
+	player.x = currentPosition.x;
+	player.y = currentPosition.y;
+}
+//PathFinding related functions
 bool CharacterBehaviour::checkNextPosition()
 {
 	//cout << "\n7\n";
@@ -16,30 +60,29 @@ bool CharacterBehaviour::checkNextPosition()
 	//Check if the next position in the array is 0, it could have changed whilst the unit is moving.
 	//cout << "NextStep: " << nextStep << " ListSize: " << nav.pathList.size() - 1;
 		checkForTarget();
-		cout << "\nFart1 \n" << nextStep << nav.pathList.size();
+		//cout << "\nFart1 \n" << nextStep << nav.pathList.size();
 		if (nextStep != -1)
 		{
 			int x = nav.pathList[nextStep]->position.x;
 			int y = nav.pathList[nextStep]->position.y;
 			//cout << "\n8\n";
-			cout << "\nFart2\n";
+			//cout << "\nFart2\n";
 
 			if (level.house[y][x] != 0)
 			{
 				//cout << "\n8\n";
-				cout << "\nFart3\n";
+				//cout << "\nFart3\n";
 
 				return false;
 			}
 			else
-				cout << "\nFart4\n";
+				//cout << "\nFart4\n";
 
 			return true;
 		}
 		
 		return false;
 }
-
 void CharacterBehaviour::moveToTarget()
 {
 	if (nextStep > -1 || nextStep < nav.pathList.size() - 1)
@@ -73,8 +116,6 @@ void CharacterBehaviour::moveToTarget()
 		checkForTarget();
 	}
 }
-
-
 bool CharacterBehaviour::checkForTarget()
 {
 	if (roomAlg.targetToSend.x != -1)
@@ -103,10 +144,82 @@ bool CharacterBehaviour::checkForTarget()
 	}
 	
 }
-
-void CharacterBehaviour::update(map<int, vector<int>> graphOG)
+void CharacterBehaviour::setUpPath(Vector2D tar)
 {
-	
+	nav.search(arrayPosition.x, arrayPosition.y, tar.x, tar.y);
+
+	nextStep = nav.pathList.size() -1;
+
+	pathSet = true;
+}
+void CharacterBehaviour::sameRoomProcess() {
+	//set current target to the target final position
+	currentTarget = targetPosition;
+	//cout << "\n1\n";
+	// if AT the target
+	if (arrayPosition.x == currentTarget.x && arrayPosition.y == currentTarget.y)
+	{
+		cout << "\nDestination Met\n";
+		//subTarget = Vector2D(-1, -1);
+		//graphPathSet = false;
+		pathSet = false;
+		targetRoom = -1;
+		//cout << "\n2\n";
+		//roomPathList.clear();
+		// this is not supposed to happen
+		return;
+	}
+
+	//cout << "\n3\n";
+	if (!pathSet && currentTarget.x != -1 && currentTarget.y != -1 && arrayPosition.x != targetPosition.x && arrayPosition.y != targetPosition.y)
+	{
+		//cout << "\n4\n";
+		cout << "\nSetting Up the Path\n";
+		setUpPath(targetPosition);
+	}
+	//cout << "\n5\n";
+
+	//cout << "\n Current Target: " << currentTarget << " Final target Position: " << targetFinalPosition << " Current Position: " << arrayPosition << endl;
+
+	if (!nav.pathList.empty())
+	{
+		//cout << "\n6\n";
+		checkNextPosition();
+		//cout << "\n7\n";
+		moveToTarget();
+		//cout << "\n8\n";
+
+	}
+}
+void CharacterBehaviour::differentRoomProcess(map<int, vector<int>> graphOG) 
+{
+	//set up the path if it has not been set already. 
+	if (!roomAlg.pathSet)
+	{
+		roomAlg.setUpPath();
+		if (roomAlg.targetToSend.x != -1)
+			setUpPath(roomAlg.targetToSend);
+	}
+
+	if (!nav.pathList.empty())
+	{
+		cout << "\nMoving to Target\n";
+		checkNextPosition();
+		moveToTarget();
+		roomAlg.setNextTarget();
+	}
+
+
+}
+void CharacterBehaviour::createNewDoor(int iD, Vector2D loco)
+{
+	Door newDoor;
+	newDoor.id = iD;
+	newDoor.location = loco;
+	//doors.push_back(newDoor);
+}
+void CharacterBehaviour::pathFinding(map<int, vector<int>> graphOG, vector<Room>* rList)
+{
 	// SET THE CURRENT ROOMS AND TARGET ROOM
 	// set the current room
 	int xA = arrayPosition.x;
@@ -116,10 +229,17 @@ void CharacterBehaviour::update(map<int, vector<int>> graphOG)
 	int yB = targetPosition.y;
 	targetRoom = level.rooms[yB][xB];
 
-	
+
 	if (levelKnowledge.m_graph[currentRoom].size() != graphOG[currentRoom].size())
 	{
 		levelKnowledge.CopyVertices(currentRoom, graphOG);
+		for ( auto& e : *rList)
+		{
+			if (e.id == currentRoom)
+			{
+				knownRooms.push_back(e);
+			}
+		}
 	}
 
 	//cout << "\nTesting it gets this far! 1\n";
@@ -138,6 +258,11 @@ void CharacterBehaviour::update(map<int, vector<int>> graphOG)
 	{
 		if (levelKnowledge.CheckForVertexPresence(targetRoom))
 			differentRoomProcess(graphOG);
+		else
+		{
+			cout << "\nRoom Unknown\n";
+			targetPosition = Vector2D(-1, -1);
+		}
 	}
 	else if (targetRoom == -1)
 	{
@@ -167,91 +292,262 @@ void CharacterBehaviour::update(map<int, vector<int>> graphOG)
 		return;
 	}
 
+
+
+	//cout << "\nSendTo: " << roomAlg.targetToSend << " Actual: " << targetPosition << " TargetRoom: " << targetRoom << " CurrentRoom: " << currentRoom << endl;
+
+}
+// Decision making related functions. 
+void CharacterBehaviour::handleNeedBars()
+{
+
+	//set all the bars to the relative value of the need so its representative... if its too low, then just show as 5 !
+
+	if (food < 10)
+	{
+		foodBar.w = 5;
+	}
+	else
+	{
+		foodBar.w = food / 10;
+	}
+
+	if (sleep < 10)
+	{
+		sleepBar.w = 5;
+	}
+	else
+	{
+		sleepBar.w = sleep / 10;
+	}
+
+	if (hygeine < 10)
+	{
+		hygeineBar.w = 5;
+	}
+	else
+	{
+		hygeineBar.w = hygeine / 10;
+	}
+
+	if (bladder < 10)
+	{
+		bladderBar.w = 5;
+	}
+	else
+	{
+		bladderBar.w = bladder / 10;
+	}
+}
+void CharacterBehaviour::renderNeedBars(SDL_Renderer* renderer)
+{
+	SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+	SDL_RenderFillRect(renderer, &foodBar);
+	SDL_RenderDrawRect(renderer, &foodBar);
+
+	SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
+	SDL_RenderFillRect(renderer, &bladderBar);
+	SDL_RenderDrawRect(renderer, &bladderBar);
+
+	SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255);
+	SDL_RenderFillRect(renderer, &hygeineBar);
+	SDL_RenderDrawRect(renderer, &hygeineBar);
+
+	SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+	SDL_RenderFillRect(renderer, &sleepBar);
+	SDL_RenderDrawRect(renderer, &sleepBar);
+}
+
+void CharacterBehaviour::checkNeeds()
+{
+	if (food < (maxNeedBar * 0.25))
+	{
+		getFoodTask();
+	}
+	if (hygeine < (maxNeedBar * 0.25))
+	{
+		getHygieneTask();
+	}
+	if (bladder < (maxNeedBar * 0.25))
+	{
+		getBladderTask();
+	}
+	if (sleep < (maxNeedBar * 0.25))
+	{
+		getSleepTask();
+	}
+}
+void CharacterBehaviour::getFoodTask()
+{
+
+	if (!foodQueued)
+	{
+		//cout << "\nLooking for a fridge\n";
+
+		for (auto& i : knownRooms)
+		{
+			//cout << "A";
+			for (auto& e : i.containedObjects)
+			{
+				//cout << "B";
+				if (e.getType() == 10)
+				{
+					//cout << "C";
+					Task t = Task(e);
+					taskList.push(t);
+					foodQueued = true;
+					break;
+				}
+			}
+		}
+	}
+	
+}
+void CharacterBehaviour::getBladderTask()
+{
 	
 
-	cout << "\nSendTo: " << roomAlg.targetToSend << " Actual: " << targetPosition << " TargetRoom: " << targetRoom << " CurrentRoom: " << currentRoom << endl;
+	if (!bladderQueued)
+	{
+		//cout << "\nLooking for a toilet\n";
+		for (auto& i : knownRooms)
+		{
+			for (auto& e : i.containedObjects)
+			{
+				if (e.getType() == 40)
+				{
+					Task t = Task(e);
+					taskList.push(t);
+					bladderQueued = true;
+					break;
+				}
+			}
+		}
+	}
+	
 
-	currentPosition.x = (arrayPosition.x * 10) + offsetX;
-	currentPosition.y = (arrayPosition.y * 10) + offsetY;
-
-	player.x = currentPosition.x;
-	player.y = currentPosition.y;
 }
-
-void CharacterBehaviour::setUpPath(Vector2D tar)
+void CharacterBehaviour::getHygieneTask()
 {
-	nav.search(arrayPosition.x, arrayPosition.y, tar.x, tar.y);
 
-	nextStep = nav.pathList.size() -1;
-
-	pathSet = true;
-}
-
-void CharacterBehaviour::sameRoomProcess() {
-	//set current target to the target final position
-	currentTarget = targetPosition;
-	cout << "\n1\n";
-	// if AT the target
-	if (arrayPosition.x == currentTarget.x && arrayPosition.y == currentTarget.y)
+	if (!hygieneQueued)
 	{
-		cout << "\nDestination Met\n";
-		//subTarget = Vector2D(-1, -1);
-		//graphPathSet = false;
-		pathSet = false;
-		targetRoom = -1;
-		cout << "\n2\n";
-		//roomPathList.clear();
-		// this is not supposed to happen
-		return;
-	}
+		//cout << "\nLooking for a shower\n";
 
-	cout << "\n3\n";
-	if (!pathSet && currentTarget.x != -1 && currentTarget.y != -1 && arrayPosition.x != targetPosition.x && arrayPosition.y != targetPosition.y)
-	{
-		cout << "\n4\n";
-		cout << "\nSetting Up the Path\n";
-		setUpPath(targetPosition);
-	}
-	cout << "\n5\n";
-
-	//cout << "\n Current Target: " << currentTarget << " Final target Position: " << targetFinalPosition << " Current Position: " << arrayPosition << endl;
-
-	if (!nav.pathList.empty())
-	{
-		cout << "\n6\n";
-		checkNextPosition();
-		cout << "\n7\n";
-		moveToTarget();
-		cout << "\n8\n";
-
+		for (auto& i : knownRooms)
+		{
+			for (auto& e : i.containedObjects)
+			{
+				if (e.getType() == 30)
+				{
+					Task t = Task(e);
+					taskList.push(t);
+					hygieneQueued = true;
+					break;
+				}
+			}
+		}
 	}
 }
-
-void CharacterBehaviour::differentRoomProcess(map<int, vector<int>> graphOG) 
+void CharacterBehaviour::getSleepTask()
 {
-	//set up the path if it has not been set already. 
-	if (!roomAlg.pathSet)
+	if (!sleepQueued)
 	{
-		roomAlg.setUpPath();
-		if (roomAlg.targetToSend.x != -1)
-			setUpPath(roomAlg.targetToSend);
+		//cout << "\nLooking for a sleep\n";
+
+		for (auto& i : knownRooms)
+		{
+			for (auto& e : i.containedObjects)
+			{
+				if (e.getType() == 20)
+				{
+					Task t = Task(e);
+					taskList.push(t);
+					sleepQueued = true;
+					break;
+				}
+			}
+		}
 	}
-
-	if (!nav.pathList.empty())
-	{
-		cout << "\nMoving to Target\n";
-		checkNextPosition();
-		moveToTarget();
-		roomAlg.setNextTarget();
-	}
-
-
 }
-
-void CharacterBehaviour:: createNewDoor(int iD, Vector2D loco)
+void CharacterBehaviour::handleTasks()
 {
-	Door newDoor;
-	newDoor.id = iD;
-	newDoor.location = loco;
-	//doors.push_back(newDoor);
+	if (!taskList.empty())
+	{
+		cout << "\nTaskList is not empty\n";
+		// there are tasks available
+		if (!taskList.front().isCompleted)
+		{
+			if(!taskList.front().isTaskSet())
+			{
+				targetPosition = taskList.front().usePoint;
+				taskList.front().setTaskSet(true);
+				cout << "\nSet Target Position and task set to true\n";
+			}
+			else
+			{
+				if (arrayPosition.x == taskList.front().usePoint.x && arrayPosition.y == taskList.front().usePoint.y)
+				{
+					if (!taskList.front().taskStarted)
+					{
+						taskList.front().setStartTime();
+						cout << "\nStart time Set\n";
+					}
+					else
+					{
+						if (taskList.front().targetObject.affectsBladder)
+						{
+							bladderMultiplier = taskList.front().targetObject.bladderModifier;
+						}
+						if (taskList.front().targetObject.affectsHunger)
+						{
+							foodMultiplier = taskList.front().targetObject.hungerModifier;
+						}
+						if (taskList.front().targetObject.affectsHygiene)
+						{
+							hygeineMultiplier = taskList.front().targetObject.hygieneModifer;
+						}
+						if (taskList.front().targetObject.affectsSleep)
+						{
+							sleepMultiplier = taskList.front().targetObject.sleepModifier;
+						}
+						taskList.front().checkIfComplete();
+					}
+				}
+			}
+		}
+		else
+		{
+			cout << "\nTask Completed\n";
+			hygeineMultiplier= 1;
+			sleepMultiplier = 1;
+			foodMultiplier = 1;
+			bladderMultiplier = 1;
+
+
+			switch (taskList.front().targetObject.getType())
+			{
+			case 10:
+				foodQueued = false;
+				break;
+			case 20:
+				sleepQueued = false;
+				break;
+			case 30:
+				hygieneQueued = false;
+				break;
+			case 40:
+				bladderQueued = false;
+				break;
+			}
+			taskList.pop();
+			
+		}
+		
+	}
+	else
+	{
+
+	}
+	cout << food << " - " << foodMultiplier << " - " << foodBar.w <<  endl;
 }
