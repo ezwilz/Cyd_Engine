@@ -17,7 +17,7 @@ class CharacterBehaviour
 	private:
 
 	//Needs
-	float food = 1000;
+	float food = 350;
 	float bladder = 1000;
 	float sleep = 1000;
 	float hygeine = 1000;
@@ -53,7 +53,10 @@ class CharacterBehaviour
 			timeTaskStarted = SDL_GetTicks();
 			taskStarted = true;
 		}
-
+		void resetStartTime()
+		{
+			taskStarted = false;
+		}
 
 		// once the duration of the task is up, tell us if its completed...
 		bool checkIfComplete()
@@ -69,6 +72,11 @@ class CharacterBehaviour
 			}
 
 			return isCompleted;
+		}
+
+		void cancelTask()
+		{
+			isCompleted = true;
 		}
 
 		bool isTaskSet()

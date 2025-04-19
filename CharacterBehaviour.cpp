@@ -20,14 +20,13 @@ void CharacterBehaviour::passive()
 
 	if (hygeine < 0)
 		hygeine = 0;
-	else if (food > maxNeedBar)
+	else if (hygeine > maxNeedBar)
 		hygeine = maxNeedBar;
 
 	if (sleep < 0)
 		sleep = 0;
-	else if (food > maxNeedBar)
+	else if (sleep > maxNeedBar)
 		sleep = maxNeedBar;
-
 
 }
 
@@ -40,10 +39,10 @@ void CharacterBehaviour::update(map<int, vector<int>> graphOG, vector<Room>* rLi
 	pathFinding(graphOG, rList);
 	handleTasks();
 
-	if (!taskList.empty())
+	/*if (!taskList.empty())
 	{
 		cout << "\nTask:" << taskList.front().targetObject.getName() << endl;
-	}
+	}*/
 	
 
 	currentPosition.x = (arrayPosition.x * 10) + offsetX;
@@ -208,8 +207,6 @@ void CharacterBehaviour::differentRoomProcess(map<int, vector<int>> graphOG)
 		moveToTarget();
 		roomAlg.setNextTarget();
 	}
-
-
 }
 void CharacterBehaviour::createNewDoor(int iD, Vector2D loco)
 {
@@ -341,19 +338,19 @@ void CharacterBehaviour::handleNeedBars()
 }
 void CharacterBehaviour::renderNeedBars(SDL_Renderer* renderer)
 {
-	SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+	SDL_SetRenderDrawColor(renderer, 207, 206, 203, 255);
 	SDL_RenderFillRect(renderer, &foodBar);
 	SDL_RenderDrawRect(renderer, &foodBar);
 
-	SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
+	SDL_SetRenderDrawColor(renderer, 143, 63, 24, 255);
 	SDL_RenderFillRect(renderer, &bladderBar);
 	SDL_RenderDrawRect(renderer, &bladderBar);
 
-	SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255);
+	SDL_SetRenderDrawColor(renderer, 62, 137, 224, 255);
 	SDL_RenderFillRect(renderer, &hygeineBar);
 	SDL_RenderDrawRect(renderer, &hygeineBar);
 
-	SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+	SDL_SetRenderDrawColor(renderer, 133, 29, 29, 255);
 	SDL_RenderFillRect(renderer, &sleepBar);
 	SDL_RenderDrawRect(renderer, &sleepBar);
 }
@@ -405,7 +402,7 @@ void CharacterBehaviour::getFoodTask()
 }
 void CharacterBehaviour::getBladderTask()
 {
-	
+	cout << "\nLooking for a toilet\n";
 
 	if (!bladderQueued)
 	{
@@ -429,17 +426,24 @@ void CharacterBehaviour::getBladderTask()
 }
 void CharacterBehaviour::getHygieneTask()
 {
+	cout << "\nLooking for a shower\n";
 
 	if (!hygieneQueued)
 	{
-		//cout << "\nLooking for a shower\n";
+		cout << "\nLooking for a shower3\n";
 
 		for (auto& i : knownRooms)
 		{
+			cout << "\nLooking for a toilet4\n";
+
 			for (auto& e : i.containedObjects)
 			{
+				cout << "\nLooking for a toilet5\n";
+
 				if (e.getType() == 30)
 				{
+					cout << "\FOUND a toilet\n";
+
 					Task t = Task(e);
 					taskList.push(t);
 					hygieneQueued = true;
@@ -514,6 +518,18 @@ void CharacterBehaviour::handleTasks()
 						taskList.front().checkIfComplete();
 					}
 				}
+				else
+				{
+					if (!(arrayPosition.x == taskList.front().usePoint.x && arrayPosition.y == taskList.front().usePoint.y) && targetPosition.x == -1)
+					{
+						hygeineMultiplier = 1;
+						sleepMultiplier = 1;
+						foodMultiplier = 1;
+						bladderMultiplier = 1;
+						taskList.front().resetStartTime();
+						targetPosition = taskList.front().usePoint;
+					}
+				}
 			}
 		}
 		else
@@ -549,5 +565,6 @@ void CharacterBehaviour::handleTasks()
 	{
 
 	}
-	cout << food << " - " << foodMultiplier << " - " << foodBar.w <<  endl;
+
+	//cout << food << " - " << foodMultiplier << " - " << foodBar.w <<  endl;
 }

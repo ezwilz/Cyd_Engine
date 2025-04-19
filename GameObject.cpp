@@ -19,8 +19,11 @@ GameObject::GameObject(int i, int t, Vector2D l)
 		affectsHunger = true;
 		affectsBladder = true;
 
-		hungerModifier = -5;
-		bladderModifier = 2;
+		affectsSleep = false;
+		affectsHygiene = false;
+
+		hungerModifier = -20;
+		bladderModifier = 3;
 
 		duration = 2500;
 
@@ -32,9 +35,15 @@ GameObject::GameObject(int i, int t, Vector2D l)
 
 		affectsSleep = true;
 
+		affectsHunger = false;
+		affectsBladder = false;
+		affectsHygiene = false;
+
+
+
 		duration = 10000;
 		
-		sleepModifier = -5;
+		sleepModifier = -30;
 		break;
 	case 30:
 		cout << "\nShower Spawned\n";
@@ -43,9 +52,13 @@ GameObject::GameObject(int i, int t, Vector2D l)
 
 		affectsHygiene = true;
 
+		affectsHunger = false;
+		affectsBladder = false;
+		affectsSleep = false;
+
 		duration = 5000;
 
-		hygieneModifer = -5;
+		hygieneModifer = -10;
 		break;
 	case 40:
 		cout << "\nToilet Spawned\n";
@@ -55,6 +68,10 @@ GameObject::GameObject(int i, int t, Vector2D l)
 		duration = 2500;
 
 		affectsBladder = true;
+
+		affectsHunger = false;
+		affectsSleep = false;
+		affectsHygiene = false;
 
 		bladderModifier = -5;
 		break;

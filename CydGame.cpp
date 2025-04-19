@@ -40,6 +40,7 @@ void CydGame::update()
 
 void CydGame::button1Pressed()
 {
+	cout << lClickArrayPosX << " , " << lClickArrayPosY << endl;
 	if (level.house[lClickArrayPosY][lClickArrayPosX] == 0)
 	{
 		if (lClickArrayPosX < 60 && lClickArrayPosX > 0 && lClickArrayPosY < 60 && lClickArrayPosY > 0)
