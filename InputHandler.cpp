@@ -58,6 +58,11 @@ void InputHandler :: handleEvent(SDL_Event& event)
 			//cout << "\n\nRight Clicked Through the Switch\n\nAt :" << getMousePosition().x << " , " << getMousePosition().y;
 			rightMBDown = true;
 		}
+		else
+		{
+			leftMBDown = false;
+			rightMBDown = false;
+		}
 		break;
 	case SDL_QUIT:
 		running = false;
@@ -68,10 +73,12 @@ void InputHandler :: handleEvent(SDL_Event& event)
 		{
 			if (paused)
 			{
+				cout << "UnPAUSED";
 				paused = false;
 			}
 			else
 			{
+				cout << "PAUSED2";
 				paused = true;
 			}
 		}
@@ -83,4 +90,5 @@ void InputHandler :: handleEvent(SDL_Event& event)
 	default:
 		break;
 	}
+	event.key.keysym.sym = NULL;
 }

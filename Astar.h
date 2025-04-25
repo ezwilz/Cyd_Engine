@@ -42,8 +42,6 @@ private:
 	Node finalNode = Node(Vector2D(-1,-1), Vector2D(-1, -1),0,0);
 	Node currentNode = Node(Vector2D(-1, -1), Vector2D(-1, -1), 0, 0);
 	Node startNode = Node(Vector2D(-1, -1), Vector2D(-1, -1), 0, 0);
-	
-
 
 	LevelMap level;
 public:

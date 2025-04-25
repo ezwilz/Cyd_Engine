@@ -2,8 +2,6 @@
 
 void CydGame::update()
 {	
-
-	
 	/*for (auto& e : rooms)
 	{
 		cout << endl << e.id << " Objects Contained: " << e.containedObjects.size();
@@ -11,7 +9,7 @@ void CydGame::update()
 	//set the event -  only allows for one button to be pressed at a time ?? 
 	eventSDL = inputHandler.GetInput();
 	inputHandler.handleEvent(eventSDL);
-
+	gameState();
 	if (!isPaused)
 	{
 		handleMapControl();
@@ -31,7 +29,7 @@ void CydGame::update()
 		cyd.update(thisGraph.GetGraph(),&rooms);
 	}
 	//update pause and running according to the input
-	gameState();
+	
 	//===============================================================================
 	//60 fps cap
 	
@@ -40,7 +38,7 @@ void CydGame::update()
 
 void CydGame::button1Pressed()
 {
-	cout << lClickArrayPosX << " , " << lClickArrayPosY << endl;
+	//cout << lClickArrayPosX << " , " << lClickArrayPosY << endl;
 	if (level.house[lClickArrayPosY][lClickArrayPosX] == 0)
 	{
 		if (lClickArrayPosX < 60 && lClickArrayPosX > 0 && lClickArrayPosY < 60 && lClickArrayPosY > 0)
@@ -95,9 +93,7 @@ void CydGame::render(SDL_Renderer* renderer)
 {
 	if (!isPaused)
 	{
-		
-		scene1(renderer);
-		
+		scene1(renderer);		
 		/*if (!a_star.pathList.empty())
 		{
 			Vector2D x;
@@ -112,7 +108,6 @@ void CydGame::render(SDL_Renderer* renderer)
 
 			}
 		}*/
-
 
 	}
 	else
@@ -165,8 +160,8 @@ void CydGame::scene1(SDL_Renderer* renderer)
 	cyd.renderNeedBars(renderer);
 
 	SDL_SetRenderDrawColor(renderer, 240, 38, 131, 255);
-	SDL_RenderFillRect(renderer, &cyd.player);
-	SDL_RenderDrawRect(renderer, &cyd.player);
+	SDL_RenderFillRect(renderer, &cyd.sprite);
+	SDL_RenderDrawRect(renderer, &cyd.sprite);
 }
 
 void CydGame::pauseScreen(SDL_Renderer* renderer)
@@ -210,7 +205,7 @@ void CydGame::loadLevel(int levelArray[60][60])
 			}
 			if (levelArray[i][j] == 4)
 			{
-				cyd.player = { j * 10,i * 10, 10,10 };
+				cyd.sprite = { j * 10,i * 10, 10,10 };
 				cyd.arrayPosition.x = j;
 				cyd.arrayPosition.y = i;
 				cyd.currentPosition = Vector2D(j * 10, i * 10);
@@ -267,8 +262,8 @@ void CydGame::moveMap(int x, int y, list<SDL_Rect>& rects, vector<GameObject>& o
 	offsetY += y;
 	cyd.offsetX = offsetX;
 	cyd.offsetY = offsetY;
-	cyd.player.x += x;
-	cyd.player.y += y;
+	cyd.sprite.x += x;
+	cyd.sprite.y += y;
 }
 
 void CydGame::moveTestDummy()
@@ -287,7 +282,7 @@ void CydGame::moveTestDummy()
 
 			int tdX = (newx * 10) + offsetX;
 			int tdY = (newy * 10) + offsetY;
-			cyd.player = { tdX, tdY, 10,10 };
+			cyd.sprite = { tdX, tdY, 10,10 };
 
 			testDummyArrayPosition.x = newx;
 			testDummyArrayPosition.y = newy;

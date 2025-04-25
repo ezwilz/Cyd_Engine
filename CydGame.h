@@ -21,24 +21,20 @@ private:
 	bool isPaused = false;
 	bool isRunning;
 
-	list<GameObject> activeObjects;
 	list<SDL_Rect> levelRects;
-	SDL_Rect rect1 = { 10,10,10,10 };
 	LevelMap level;
 	InputHandler inputHandler;
 	UI uiManager;
-
-	Astar a_star;
-
 
 	struct Door {
 		int id = -1;
 		Vector2D location = Vector2D(-1, -1);
 	};
-
-
-
 public:
+	int appWidth = 800;
+	int appHeight = 600;
+
+	CharacterBehaviour cyd;
 
 	int idTemplate = 500;
 	vector<Room> rooms;
@@ -47,27 +43,18 @@ public:
 	Graphs thisGraph;
 	vector<Door> doors;
 
+	SDL_Event eventSDL;
+
 	int offsetX = 0;
 	int offsetY = 0;
 
-	Vector2D testDummyArrayPosition;
-
-	CharacterBehaviour cyd;
 	Vector2D lastClickedLocation;
+	int lClickArrayPosX = -10;
+	int lClickArrayPosY = -10;
 	
 	int menuUIx = 0;
 	int menuUIy = 0;
-
-	int lClickArrayPosX = -10;
-	int lClickArrayPosY = -10;
-
-	SDL_Event eventSDL;
-
-	int appWidth = 800;
-	int appHeight = 600;
-
 	//===
-
 	void setPause(bool o) { isPaused = o; };
 	bool getPause() { return isPaused; };
 

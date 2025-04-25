@@ -26,18 +26,12 @@ public:
 
 	//keeps track of the doors and all their positions
 	vector<Door> doors;
-
-
 	//target and current position!
 	Vector2D* currentPosition;
 	Vector2D* targetPosition;
 
 	Vector2D targetToSend = Vector2D(-1,-1);
-
-
-
 	//Functions
-
 	// Set up path when the target room is definitely in the known vertices.
 	void setUpPath();
 	// clear path only when the current position =  target OR final target room ?

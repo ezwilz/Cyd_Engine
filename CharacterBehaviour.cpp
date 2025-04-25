@@ -39,17 +39,11 @@ void CharacterBehaviour::update(map<int, vector<int>> graphOG, vector<Room>* rLi
 	pathFinding(graphOG, rList);
 	handleTasks();
 
-	/*if (!taskList.empty())
-	{
-		cout << "\nTask:" << taskList.front().targetObject.getName() << endl;
-	}*/
-	
-
 	currentPosition.x = (arrayPosition.x * 10) + offsetX;
 	currentPosition.y = (arrayPosition.y * 10) + offsetY;
 
-	player.x = currentPosition.x;
-	player.y = currentPosition.y;
+	sprite.x = currentPosition.x;
+	sprite.y = currentPosition.y;
 }
 //PathFinding related functions
 bool CharacterBehaviour::checkNextPosition()
@@ -159,10 +153,10 @@ void CharacterBehaviour::sameRoomProcess() {
 	if (arrayPosition.x == currentTarget.x && arrayPosition.y == currentTarget.y)
 	{
 		cout << "\nDestination Met\n";
-		//subTarget = Vector2D(-1, -1);
-		//graphPathSet = false;
 		pathSet = false;
 		targetRoom = -1;
+		//subTarget = Vector2D(-1, -1);
+		//graphPathSet = false;
 		//cout << "\n2\n";
 		//roomPathList.clear();
 		// this is not supposed to happen
@@ -208,13 +202,6 @@ void CharacterBehaviour::differentRoomProcess(map<int, vector<int>> graphOG)
 		roomAlg.setNextTarget();
 	}
 }
-void CharacterBehaviour::createNewDoor(int iD, Vector2D loco)
-{
-	Door newDoor;
-	newDoor.id = iD;
-	newDoor.location = loco;
-	//doors.push_back(newDoor);
-}
 void CharacterBehaviour::pathFinding(map<int, vector<int>> graphOG, vector<Room>* rList)
 {
 	// SET THE CURRENT ROOMS AND TARGET ROOM
@@ -226,31 +213,21 @@ void CharacterBehaviour::pathFinding(map<int, vector<int>> graphOG, vector<Room>
 	int yB = targetPosition.y;
 	targetRoom = level.rooms[yB][xB];
 
-
 	if (levelKnowledge.m_graph[currentRoom].size() != graphOG[currentRoom].size())
 	{
 		levelKnowledge.CopyVertices(currentRoom, graphOG);
 		for ( auto& e : *rList)
 		{
 			if (e.id == currentRoom)
-			{
 				knownRooms.push_back(e);
-			}
 		}
 	}
-
 	//cout << "\nTesting it gets this far! 1\n";
 	if (targetPosition.x == -1)
-	{
-
 		targetRoom = -1;
-	}
-
 	//if the target is in the same room follow one process or else do the graph process !
 	if (targetRoom == currentRoom)
-	{
 		sameRoomProcess();
-	}
 	else if (targetRoom != -1 && targetRoom != currentRoom)
 	{
 		if (levelKnowledge.CheckForVertexPresence(targetRoom))
@@ -288,11 +265,7 @@ void CharacterBehaviour::pathFinding(map<int, vector<int>> graphOG, vector<Room>
 		pathSet = false;
 		return;
 	}
-
-
-
 	//cout << "\nSendTo: " << roomAlg.targetToSend << " Actual: " << targetPosition << " TargetRoom: " << targetRoom << " CurrentRoom: " << currentRoom << endl;
-
 }
 // Decision making related functions. 
 void CharacterBehaviour::handleNeedBars()
@@ -301,40 +274,24 @@ void CharacterBehaviour::handleNeedBars()
 	//set all the bars to the relative value of the need so its representative... if its too low, then just show as 5 !
 
 	if (food < 10)
-	{
 		foodBar.w = 5;
-	}
 	else
-	{
 		foodBar.w = food / 10;
-	}
 
 	if (sleep < 10)
-	{
 		sleepBar.w = 5;
-	}
 	else
-	{
 		sleepBar.w = sleep / 10;
-	}
 
 	if (hygeine < 10)
-	{
 		hygeineBar.w = 5;
-	}
 	else
-	{
 		hygeineBar.w = hygeine / 10;
-	}
 
 	if (bladder < 10)
-	{
 		bladderBar.w = 5;
-	}
 	else
-	{
 		bladderBar.w = bladder / 10;
-	}
 }
 void CharacterBehaviour::renderNeedBars(SDL_Renderer* renderer)
 {
@@ -376,11 +333,9 @@ void CharacterBehaviour::checkNeeds()
 }
 void CharacterBehaviour::getFoodTask()
 {
-
 	if (!foodQueued)
 	{
 		//cout << "\nLooking for a fridge\n";
-
 		for (auto& i : knownRooms)
 		{
 			//cout << "A";
@@ -398,7 +353,6 @@ void CharacterBehaviour::getFoodTask()
 			}
 		}
 	}
-	
 }
 void CharacterBehaviour::getBladderTask()
 {
@@ -500,21 +454,14 @@ void CharacterBehaviour::handleTasks()
 					else
 					{
 						if (taskList.front().targetObject.affectsBladder)
-						{
 							bladderMultiplier = taskList.front().targetObject.bladderModifier;
-						}
 						if (taskList.front().targetObject.affectsHunger)
-						{
 							foodMultiplier = taskList.front().targetObject.hungerModifier;
-						}
 						if (taskList.front().targetObject.affectsHygiene)
-						{
 							hygeineMultiplier = taskList.front().targetObject.hygieneModifer;
-						}
 						if (taskList.front().targetObject.affectsSleep)
-						{
 							sleepMultiplier = taskList.front().targetObject.sleepModifier;
-						}
+
 						taskList.front().checkIfComplete();
 					}
 				}
@@ -539,7 +486,6 @@ void CharacterBehaviour::handleTasks()
 			sleepMultiplier = 1;
 			foodMultiplier = 1;
 			bladderMultiplier = 1;
-
 
 			switch (taskList.front().targetObject.getType())
 			{

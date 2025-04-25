@@ -86,10 +86,7 @@ void GameObject:: setType(int t)
 {
 	type = t;
 }
-void GameObject::setStat(int s)
-{
-	stat = s;
-}
+
 void GameObject::setName(string n)
 {
 	name = n;
@@ -110,10 +107,6 @@ void GameObject::setId(int i)
 int GameObject::getType()
 {
 	return type;
-}
-int GameObject::getStat()
-{
-	return stat;
 }
 string GameObject::getName()
 {

@@ -15,21 +15,12 @@ using namespace std;
 class CharacterBehaviour
 {
 	private:
-
 	//Needs
 	float food = 350;
 	float bladder = 1000;
 	float sleep = 1000;
 	float hygeine = 1000;
-
 	const float maxNeedBar = 1000;
-	// TODO: make a task list where the unit will work through the tasks and if its empty, they will become autonomous
-
-	struct Door {
-		int id = -1;
-		Vector2D location = Vector2D(-1, -1);
-	};
-
 	struct Task {
 		
 		GameObject targetObject;
@@ -90,8 +81,19 @@ class CharacterBehaviour
 		}
 
 	};
-
 public:
+	//vector<int> roomPathList;
+	//int roomPathStep = -1;
+	////Vector2D doorTargetPosition = Vector2D(-1, -1);
+	////Vector2D roomTargetFromDoor = Vector2D(-1, -1);
+	//Vector2D subTarget = Vector2D(-1, -1);
+	//vector<Vector2D> vertexPositions;
+	//bool graphPathSet = false;
+	//bool roomFound = false;
+	//DOORS STUFF
+	//vector<Door> doors;
+	
+	//movement
 	//Tasks
 	//tasklist will queue the tasks the character deem neccessary to complete
 	queue<Task> taskList;
@@ -113,7 +115,45 @@ public:
 	bool foodQueued = false;
 	bool hygieneQueued = false;
 	bool sleepQueued = false;
+	
+	//NAVIGATION
+	// //A* Navigation
+	Astar nav;
+	// Room pathfinding
+	RoomAlgorithm roomAlg;
+	//Level Memory
+	Graphs levelKnowledge;
+	LevelMap level;
+	
+	//render
+	SDL_Rect sprite;
+	// VECTORS
+	Vector2D currentPosition;
+	Vector2D targetPosition = Vector2D(-1, -1);
+	Vector2D arrayPosition;
 
+	//Navigation variables
+	bool pathSet = false;
+	int nextStep = 0;
+	bool targetReached = false;
+	bool targetSet = false;
+	// will be set with final target and the room target interchangably
+	Vector2D currentTarget = Vector2D(-1, -1);
+	//render offsets
+	int offsetX;
+	int offsetY;
+	//Rooms
+	int currentRoom;
+	int targetRoom;
+	//timers
+	int tileSpeed = 100; // 500 ms to move one tile
+	int lastTileMoved = 0;
+
+	void update(map<int, vector<int>> graphOG, vector<Room>* rList);
+	bool checkForTarget();
+	void setUpPath(Vector2D tar);
+
+	void passive();
 	void handleNeedBars();
 	void renderNeedBars(SDL_Renderer* renderer);
 	void checkNeeds();
@@ -123,67 +163,10 @@ public:
 	void getSleepTask();
 	void handleTasks();
 
-	// Room pathfinding
-	RoomAlgorithm roomAlg;
-	//Level Memory
-	Graphs levelKnowledge;
-	//vector<int> roomPathList;
-	//int roomPathStep = -1;
-	////Vector2D doorTargetPosition = Vector2D(-1, -1);
-	////Vector2D roomTargetFromDoor = Vector2D(-1, -1);
-	//Vector2D subTarget = Vector2D(-1, -1);
-
-	//vector<Vector2D> vertexPositions;
-	//bool graphPathSet = false;
-	//bool roomFound = false;
-
-	//DOORS STUFF
-	//vector<Door> doors;
-	//movement
-	LevelMap level;
-	Astar nav;
-
-	SDL_Rect player;
-
-	Vector2D currentPosition;
-	Vector2D targetPosition = Vector2D(-1, -1);
-	Vector2D arrayPosition;
-	bool pathSet = false;
-	int numberOfSteps;
-	int nextStep = 0;
-	bool targetReached = false;
-	bool targetSet = false;
-
-	// will be set with final target and the room target interchangably
-	Vector2D currentTarget = Vector2D(-1, -1);
-
-
-	//references
-	int offsetX;
-	int offsetY;
-
-	int currentRoom;
-	int targetRoom;
-	
-	
-	//timers
-	int tileSpeed = 100; // 500 ms to move one tile
-	int lastTileMoved = 0;
-
-	void update(map<int, vector<int>> graphOG, vector<Room>* rList);
-	bool checkForTarget();
-	void setUpPath(Vector2D tar);
-	void passive();
 	bool checkNextPosition();
 	void moveToTarget();
-	void getRoomTarget();
-	void navigateDoor();
-
 	void sameRoomProcess();
 	void differentRoomProcess(map<int, vector<int>> graphOG);
-
-	void createNewDoor(int iD, Vector2D loco);
-
 	void pathFinding(map<int, vector<int>> graphOG, vector<Room>* rList);
 
 

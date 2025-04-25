@@ -11,8 +11,6 @@ private:
 	int id = -1;
 	// type refers to 1 = fridge 2 = bed etc. 
 	int type = -1;
-	// stat refers to which stat it affects 1= energy 2=hunger etc. 
-	int stat = -1;
 	// duration refers to the time it takes to complete this objects action in seconds
 	int duration = -1;
 	// for text renderings in game !
@@ -30,14 +28,12 @@ public:
 	int hungerModifier, sleepModifier, bladderModifier, hygieneModifer = 0;
 
 	void setType(int t);
-	void setStat(int s);
 	void setName(string n);
 	void setLocation(Vector2D l);
 	void setDuration(int d);
 	void setId(int i);
 
 	int getType();
-	int getStat();
 	string getName();
 	Vector2D getLocation();
 	int getDuration();

@@ -28,10 +28,7 @@ void UI::renderUI(SDL_Renderer* renderer, int x, int y)
 			{
 				button1Clicked = true;
 			}
-			else
-			{
-				button1Clicked = false;
-			}
+			
 		}
 		else
 		{//blue when not hovering 
