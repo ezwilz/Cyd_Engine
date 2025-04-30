@@ -7,6 +7,9 @@ void CharacterBehaviour::passive()
 	bladder -= 0.5 * bladderMultiplier;
 	hygeine -= 0.5 * hygeineMultiplier;
 	sleep -= 0.5 * sleepMultiplier;
+	fun -= 0.5 * funMultiplier;
+	fun1 -= 0.5 * funMultiplier;
+	fun2 -= 0.5 * funMultiplier;
 
 	if (food < 0)
 		food = 0;
@@ -28,6 +31,23 @@ void CharacterBehaviour::passive()
 	else if (sleep > maxNeedBar)
 		sleep = maxNeedBar;
 
+	if (fun < 0)
+		fun = 0;
+	else if (fun > maxNeedBar)
+		fun = maxNeedBar;
+
+	if (fun1 < 0)
+		fun1 = 0;
+	else if (fun1 > maxNeedBar)
+		fun1 = maxNeedBar;
+
+	if (fun2 < 0)
+		fun2 = 0;
+	else if (fun2 > maxNeedBar)
+		fun2 = maxNeedBar;
+
+	//cout << "Fun1 " << fun1 << " Fun2 " << fun2;
+		 
 }
 
 void CharacterBehaviour::update(map<int, vector<int>> graphOG, vector<Room>* rList)
@@ -213,18 +233,76 @@ void CharacterBehaviour::pathFinding(map<int, vector<int>> graphOG, vector<Room>
 	int yB = targetPosition.y;
 	targetRoom = level.rooms[yB][xB];
 
+
+	if (knownRooms.size() != rList->size())
+	{
+		for (auto& e : *rList)
+		{
+			bool roomInList = false;
+			//Look for the current Room
+			if (e.id == currentRoom)
+			{
+				//look through the unit knownRooms
+				for (auto e1 : knownRooms)
+				{
+					//If the id is also the currentRoom
+					if (e1.id == currentRoom)
+					{
+						roomInList = true;
+						break;
+					}
+				}
+				if (!roomInList)
+				{
+					knownRooms.push_back(e);
+					break;
+				}
+					
+			}
+		}
+	}
+	
 	if (levelKnowledge.m_graph[currentRoom].size() != graphOG[currentRoom].size())
 	{
 		levelKnowledge.CopyVertices(currentRoom, graphOG);
-		for ( auto& e : *rList)
-		{
-			if (e.id == currentRoom)
-				knownRooms.push_back(e);
-		}
+		
 	}
+	
+
 	//cout << "\nTesting it gets this far! 1\n";
 	if (targetPosition.x == -1)
 		targetRoom = -1;
+
+	if (nav.pathFindingCancelled)
+	{
+		//reset the lists and the values!
+		targetRoom = -1;
+		// clear the Astar pathlist 
+		nav.pathList.clear();
+		//reset the final target position (where it was clicked)
+		targetPosition = Vector2D(-1, -1);
+		// also set the current target to the targetfinal position ?
+		currentTarget = Vector2D(-1, -1);
+		//reset the nextstep and the roomstep to -1 -1 so it cannot be used in a list and if it does it will bring  up and error.
+		nextStep = -1;
+		roomAlg.clearPath();
+		roomAlg.nextStep = -1;
+		//roomAlg.clearPath();
+		cout << "\nDestination Met\n";
+		nav.pathFindingCancelled = false;
+		cout << "\nPathFinding Cancelled - t to f ";
+		// reset pathset to false, because there is no path to be followed.
+		pathSet = false;
+		int x = arrayPosition.x;
+		int y = arrayPosition.y;
+
+		level.house[y][x] = 0;
+		arrayPosition.y -= 1;
+		level.house[y -1][x] = 4;
+		//targetPosition = taskList.front().usePoint;
+		return;
+	}
+
 	//if the target is in the same room follow one process or else do the graph process !
 	if (targetRoom == currentRoom)
 		sameRoomProcess();
@@ -260,11 +338,18 @@ void CharacterBehaviour::pathFinding(map<int, vector<int>> graphOG, vector<Room>
 
 		//roomAlg.clearPath();
 		cout << "\nDestination Met\n";
-
+		
+		
 		// reset pathset to false, because there is no path to be followed.
 		pathSet = false;
 		return;
 	}
+	/*if (nav.searchStuck)
+	{
+		targetPosition = arrayPosition;
+		nav.searchStuck = false;
+		nav.searchLoop = 0;
+	}*/
 	//cout << "\nSendTo: " << roomAlg.targetToSend << " Actual: " << targetPosition << " TargetRoom: " << targetRoom << " CurrentRoom: " << currentRoom << endl;
 }
 // Decision making related functions. 
@@ -292,6 +377,11 @@ void CharacterBehaviour::handleNeedBars()
 		bladderBar.w = 5;
 	else
 		bladderBar.w = bladder / 10;
+
+	if (fun < 10)
+		funBar.w = 5;
+	else
+		funBar.w = fun / 10;
 }
 void CharacterBehaviour::renderNeedBars(SDL_Renderer* renderer)
 {
@@ -310,6 +400,10 @@ void CharacterBehaviour::renderNeedBars(SDL_Renderer* renderer)
 	SDL_SetRenderDrawColor(renderer, 133, 29, 29, 255);
 	SDL_RenderFillRect(renderer, &sleepBar);
 	SDL_RenderDrawRect(renderer, &sleepBar);
+
+	SDL_SetRenderDrawColor(renderer, 255, 153, 0, 255);
+	SDL_RenderFillRect(renderer, &funBar);
+	SDL_RenderDrawRect(renderer, &funBar);
 }
 
 void CharacterBehaviour::checkNeeds()
@@ -330,6 +424,14 @@ void CharacterBehaviour::checkNeeds()
 	{
 		getSleepTask();
 	}
+	if (fun < 750)
+	{
+		if (sleep > (maxNeedBar * 0.25) && bladder > (maxNeedBar * 0.25) && hygeine > (maxNeedBar * 0.25) && food > (maxNeedBar * 0.25))
+		{
+			getFunTask();
+		}
+	}
+	
 }
 void CharacterBehaviour::getFoodTask()
 {
@@ -356,8 +458,6 @@ void CharacterBehaviour::getFoodTask()
 }
 void CharacterBehaviour::getBladderTask()
 {
-	cout << "\nLooking for a toilet\n";
-
 	if (!bladderQueued)
 	{
 		//cout << "\nLooking for a toilet\n";
@@ -380,23 +480,22 @@ void CharacterBehaviour::getBladderTask()
 }
 void CharacterBehaviour::getHygieneTask()
 {
-	cout << "\nLooking for a shower\n";
 
 	if (!hygieneQueued)
 	{
-		cout << "\nLooking for a shower3\n";
+		//cout << "\nLooking for a shower3\n";
 
 		for (auto& i : knownRooms)
 		{
-			cout << "\nLooking for a toilet4\n";
+			//cout << "\nLooking for a toilet4\n";
 
 			for (auto& e : i.containedObjects)
 			{
-				cout << "\nLooking for a toilet5\n";
+				//cout << "\nLooking for a toilet5\n";
 
 				if (e.getType() == 30)
 				{
-					cout << "\FOUND a toilet\n";
+					//cout << "\FOUND a toilet\n";
 
 					Task t = Task(e);
 					taskList.push(t);
@@ -428,11 +527,52 @@ void CharacterBehaviour::getSleepTask()
 		}
 	}
 }
+void CharacterBehaviour::getFunTask()
+{
+	if (!funQueued)
+	{
+		//cout << "\nLooking for a sleep\n";
+		if (fun1 > fun2)
+		{
+			for (auto& i : knownRooms)
+			{
+				for (auto& e : i.containedObjects)
+				{
+					if (e.getType() == 50)
+					{
+						Task t = Task(e);
+						taskList.push(t);
+						funQueued = true;
+						fun1 += 173;
+						break;
+					}
+				}
+			}
+		}
+		else
+		{
+			for (auto& i : knownRooms)
+			{
+				for (auto& e : i.containedObjects)
+				{
+					if (e.getType() == 60)
+					{
+						Task t = Task(e);
+						taskList.push(t);
+						funQueued = true;
+						fun2 += 179.2;
+						break;
+					}
+				}
+			}
+		}
+	}
+}
 void CharacterBehaviour::handleTasks()
 {
 	if (!taskList.empty())
 	{
-		cout << "\nTaskList is not empty\n";
+		//cout << "\nTaskList is not empty\n";
 		// there are tasks available
 		if (!taskList.front().isCompleted)
 		{
@@ -461,6 +601,9 @@ void CharacterBehaviour::handleTasks()
 							hygeineMultiplier = taskList.front().targetObject.hygieneModifer;
 						if (taskList.front().targetObject.affectsSleep)
 							sleepMultiplier = taskList.front().targetObject.sleepModifier;
+						if (taskList.front().targetObject.affectsFun)
+							funMultiplier = taskList.front().targetObject.funModifier;
+
 
 						taskList.front().checkIfComplete();
 					}
@@ -469,10 +612,12 @@ void CharacterBehaviour::handleTasks()
 				{
 					if (!(arrayPosition.x == taskList.front().usePoint.x && arrayPosition.y == taskList.front().usePoint.y) && targetPosition.x == -1)
 					{
-						hygeineMultiplier = 1;
+						foodMultiplier = 1.77;
+						bladderMultiplier = 1.60;
 						sleepMultiplier = 1;
-						foodMultiplier = 1;
-						bladderMultiplier = 1;
+						hygeineMultiplier = 1.10;
+						funMultiplier = 1.90;
+
 						taskList.front().resetStartTime();
 						targetPosition = taskList.front().usePoint;
 					}
@@ -482,10 +627,11 @@ void CharacterBehaviour::handleTasks()
 		else
 		{
 			cout << "\nTask Completed\n";
-			hygeineMultiplier= 1;
+			foodMultiplier = 1.77;
+			bladderMultiplier = 1.60;
 			sleepMultiplier = 1;
-			foodMultiplier = 1;
-			bladderMultiplier = 1;
+			hygeineMultiplier = 1.10;
+			funMultiplier = 1.90;
 
 			switch (taskList.front().targetObject.getType())
 			{
@@ -501,6 +647,11 @@ void CharacterBehaviour::handleTasks()
 			case 40:
 				bladderQueued = false;
 				break;
+			case 50:
+				funQueued = false;
+				break;
+			case 60:
+				funQueued = false;
 			}
 			taskList.pop();
 			
@@ -513,4 +664,31 @@ void CharacterBehaviour::handleTasks()
 	}
 
 	//cout << food << " - " << foodMultiplier << " - " << foodBar.w <<  endl;
+}
+void CharacterBehaviour::queueTask(GameObject object)
+{
+	//EMPTY THE QUEUE AND PRIORITISE THE TASK MANUALLY SET
+	for (int i = 0; i < taskList.size(); i++)
+	{
+		if (!taskList.empty())
+		{
+			taskList.pop();
+		}
+	}
+	hygieneQueued = false;
+	sleepQueued = false;
+	foodQueued = false;
+	bladderQueued = false;
+	funQueued = false;
+	Task t = Task(object);
+	switch (object.getType())
+	{
+		case 10: foodQueued = true; break;
+		case 20: sleepQueued = true; break;
+		case 30: hygieneQueued = true; break;
+		case 40: bladderQueued = true; break;
+		case 50: funQueued = true; break;
+		case 60: funQueued = true; break;
+	}
+	taskList.push(t);
 }

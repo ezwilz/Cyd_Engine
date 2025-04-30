@@ -13,6 +13,10 @@ void gameLoop(SDL_Renderer* renderer)
     game->setRunning(true);
     SDL_Event event;
     while (game->getRunning()) {
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            game->inputHandler.handleEvent(event);
+        }
         /*while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 game->setRunning(false);
@@ -55,7 +59,7 @@ void gameLoop(SDL_Renderer* renderer)
 int runGame()
 {
     // Create an SDL window
-    SDL_Window* gameWindow = SDL_CreateWindow("SDL2 Window",
+    SDL_Window* gameWindow = SDL_CreateWindow("Cyd Game -  The Computing Project",
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
         game->appWidth, game->appHeight,            // Width and height

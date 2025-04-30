@@ -23,7 +23,6 @@ private:
 
 	list<SDL_Rect> levelRects;
 	LevelMap level;
-	InputHandler inputHandler;
 	UI uiManager;
 
 	struct Door {
@@ -31,8 +30,12 @@ private:
 		Vector2D location = Vector2D(-1, -1);
 	};
 public:
+
+	AabbCollision collisionChecker;
+	InputHandler inputHandler;
 	int appWidth = 800;
 	int appHeight = 600;
+	SDL_Rect currentTask = { appWidth - 60, appHeight - 60, 50,50 };
 
 	CharacterBehaviour cyd;
 

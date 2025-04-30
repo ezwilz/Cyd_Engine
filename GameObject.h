@@ -23,9 +23,9 @@ public:
 
 	SDL_Rect rect = { 10,10,10,10 };
 
-	bool affectsHunger, affectsBladder, affectsSleep, affectsHygiene = false;
+	bool affectsHunger, affectsBladder, affectsSleep, affectsHygiene, affectsFun = false;
 
-	int hungerModifier, sleepModifier, bladderModifier, hygieneModifer = 0;
+	int hungerModifier, sleepModifier, bladderModifier, hygieneModifer, funModifier = 0;
 
 	void setType(int t);
 	void setName(string n);

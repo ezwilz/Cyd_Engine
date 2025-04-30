@@ -47,6 +47,11 @@ private:
 public:
 	double smallestCost = 1000000000000;
 
+	int iterationCount = 0;
+	const int maxIterationCount = 1000;
+
+	bool pathFindingCancelled = false;
+
 	vector<Node*> openList, closedList;
 	vector<Node*> pathList;
 	void setTargetPosition(int x, int y);

@@ -16,11 +16,16 @@ class CharacterBehaviour
 {
 	private:
 	//Needs
-	float food = 350;
+	float food = 1000;
 	float bladder = 1000;
 	float sleep = 1000;
 	float hygeine = 1000;
+	float fun = 1000;
 	const float maxNeedBar = 1000;
+
+	float fun1 = 786;
+	float fun2 = 554;
+
 	struct Task {
 		
 		GameObject targetObject;
@@ -101,20 +106,23 @@ public:
 	//this version of the room list will already have the objects within, so there is no need to keep a seperate objects list (i think)
 	vector<Room> knownRooms;
 	//Needs
-	float foodMultiplier = 1;
-	float bladderMultiplier = 1;
+	float foodMultiplier = 1.77;
+	float bladderMultiplier = 1.60;
 	float sleepMultiplier = 1;
-	float hygeineMultiplier = 1;
+	float hygeineMultiplier = 1.10;
+	float funMultiplier = 1.90;
 
 	SDL_Rect foodBar = {650,40,10,10};
 	SDL_Rect bladderBar = { 650,60,10,10 };
 	SDL_Rect sleepBar = { 650,80,10,10 };
-	SDL_Rect  hygeineBar = { 650,100,10,10 };
+	SDL_Rect hygeineBar = { 650,100,10,10 };
+	SDL_Rect funBar = { 650,120,10,10 };
 
 	bool bladderQueued = false;
 	bool foodQueued = false;
 	bool hygieneQueued = false;
 	bool sleepQueued = false;
+	bool funQueued = false;
 	
 	//NAVIGATION
 	// //A* Navigation
@@ -161,6 +169,7 @@ public:
 	void getBladderTask();
 	void getHygieneTask();
 	void getSleepTask();
+	void getFunTask();
 	void handleTasks();
 
 	bool checkNextPosition();
@@ -168,6 +177,7 @@ public:
 	void sameRoomProcess();
 	void differentRoomProcess(map<int, vector<int>> graphOG);
 	void pathFinding(map<int, vector<int>> graphOG, vector<Room>* rList);
+	void queueTask(GameObject object);
 
 
 

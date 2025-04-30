@@ -19,6 +19,9 @@ public:
 	SDL_Event GetInput();
 	void handleEvent(SDL_Event& event);
 
+	void pollEvent(SDL_Event* event);
+
+
 
 };
 

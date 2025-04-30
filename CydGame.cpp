@@ -7,8 +7,13 @@ void CydGame::update()
 		cout << endl << e.id << " Objects Contained: " << e.containedObjects.size();
 	}*/
 	//set the event -  only allows for one button to be pressed at a time ?? 
-	eventSDL = inputHandler.GetInput();
-	inputHandler.handleEvent(eventSDL);
+	
+	/*eventSDL = inputHandler.GetInput();
+	
+	inputHandler.handleEvent(eventSDL);*/
+
+	//inputHandler.pollEvent(&eventSDL);
+
 	gameState();
 	if (!isPaused)
 	{
@@ -21,12 +26,91 @@ void CydGame::update()
 		{
 			button1Pressed();
 		}
-		//===============================================================================
+		else if (inputHandler.rightMBDown)
+		{
 
+			for (auto e : cyd.knownRooms)
+			{
+				cout << "\n" << e.id;
+				for (auto e1 : e.containedObjects)
+				{
+					cout << " " << e1.getName();
+				}
+				cout << endl;
+			}
+			cout << cyd.currentRoom;
+
+			lClickArrayPosX = (inputHandler.getMousePosition().x - offsetX) / 10;
+			lClickArrayPosY = (inputHandler.getMousePosition().y - offsetY) / 10;
+
+			if (level.house[lClickArrayPosY][lClickArrayPosX] == 0)
+			{
+				if (lClickArrayPosX < 60 && lClickArrayPosX > 0 && lClickArrayPosY < 60 && lClickArrayPosY > 0)
+				{
+					cyd.targetPosition = Vector2D(lClickArrayPosX, lClickArrayPosY);
+					cyd.pathSet = false;
+				}
+			}
+			else if (level.house[lClickArrayPosY][lClickArrayPosX] > 9 && level.house[lClickArrayPosY][lClickArrayPosX] < 61)
+			{
+				for (auto& e : cyd.knownRooms)
+				{
+					if (level.rooms[lClickArrayPosY][lClickArrayPosX] == e.id)
+					{
+						for (auto& o : e.containedObjects)
+						{
+							if (o.getLocation().x == lClickArrayPosX && o.getLocation().y == lClickArrayPosY)
+							{
+								cyd.queueTask(o);
+							}
+						}
+					}
+				}
+			}
+
+			cout << "Current: " << cyd.currentRoom << " Target: " << cyd.targetRoom << endl;
+		}
+		//===============================================================================
 		cyd.offsetX = offsetX;
 		cyd.offsetY = offsetY;
 
 		cyd.update(thisGraph.GetGraph(),&rooms);
+	}
+
+	if (collisionChecker.checkAABBCollision(currentTask.x, currentTask.y, currentTask.w, currentTask.h, inputHandler.getMouseX(), inputHandler.getMouseY(), 5, 5))
+	{
+		if (!cyd.taskList.empty())
+		{
+			switch (cyd.taskList.front().targetObject.getType())
+			{
+			case 10:
+				cyd.foodQueued = false;
+				break;
+			case 20:
+				cyd.sleepQueued = false;
+				break;
+			case 30:
+				cyd.hygieneQueued = false;
+				break;
+			case 40:
+				cyd.bladderQueued = false;
+				break;
+			case 50:
+				cyd.funQueued = false;
+				break;
+			case 60:
+				cyd.funQueued = false;
+				break;
+			}
+
+			cyd.foodMultiplier = 1.77;
+			cyd.bladderMultiplier = 1.60;
+			cyd.sleepMultiplier = 1;
+			cyd.hygeineMultiplier = 1.10;
+			cyd.funMultiplier = 1.90;
+			
+			cyd.taskList.pop();
+		}
 	}
 	//update pause and running according to the input
 	
@@ -67,19 +151,19 @@ void CydGame::leftClickAction()
 	lClickArrayPosX = (inputHandler.getMousePosition().x - offsetX) / 10;
 	lClickArrayPosY = (inputHandler.getMousePosition().y - offsetY) / 10;
 
-	cout << "\Cyd Graph: ";
-	cyd.levelKnowledge.printGraph();
-	cout << "\nThis Graph: ";
-	thisGraph.printGraph();
+	//cout << "\Cyd Graph: ";
+	//cyd.levelKnowledge.printGraph();
+	//cout << "\nThis Graph: ";
+	//thisGraph.printGraph();
 
 	/*for (int i = 0; i < a_star.pathList.size(); i++)
 	{
 		cout << "Step " << i << ":" << a_star.pathList[i].position << "\n";
 	}*/
 
-	cout << "\n\n" << lClickArrayPosX << " , " << lClickArrayPosY;
+	//cout << "\n\n" << lClickArrayPosX << " , " << lClickArrayPosY;
 
-	cout << "\n\Left Clicked Through the Switch\n\nAt :" << inputHandler.getMousePosition().x << " , " << inputHandler.getMousePosition().y;
+	//cout << "\n\Left Clicked Through the Switch\n\nAt :" << inputHandler.getMousePosition().x << " , " << inputHandler.getMousePosition().y;
 	inputHandler.leftMBDown = false;
 }
 
@@ -148,6 +232,16 @@ void CydGame::scene1(SDL_Renderer* renderer)
 			//toilet colour
 			SDL_SetRenderDrawColor(renderer, 143, 63, 24, 255);
 		}
+		if (element.getType() == 50)
+		{
+			//fun1 colour
+			SDL_SetRenderDrawColor(renderer, 255, 153, 0, 255);
+		}
+		if (element.getType() == 60)
+		{
+			//fun2 colour
+			SDL_SetRenderDrawColor(renderer, 255, 153, 0, 255);
+		}
 		SDL_RenderFillRect(renderer, &element.rect);
 		SDL_RenderDrawRect(renderer, &element.rect);
 
@@ -156,7 +250,46 @@ void CydGame::scene1(SDL_Renderer* renderer)
 	{
 		uiManager.renderUI(renderer, menuUIx, menuUIy);
 	}
-	
+	if (!cyd.taskList.empty())
+	{
+		switch (cyd.taskList.front().targetObject.getType())
+		{
+		case 10:
+			// fridge colour
+			SDL_SetRenderDrawColor(renderer, 207, 206, 203, 255);
+			break;
+		case 20:
+			//bed colour
+			SDL_SetRenderDrawColor(renderer, 133, 29, 29, 255);
+			break;
+		case 30:
+			//shower colour
+			SDL_SetRenderDrawColor(renderer, 62, 137, 224, 255);
+			break;
+		case 40:
+			//toilet colour
+			SDL_SetRenderDrawColor(renderer, 143, 63, 24, 255);
+			break;
+		case 50:
+			//toilet colour
+			SDL_SetRenderDrawColor(renderer, 255, 153, 0, 255);
+			break;
+		case 60:
+			//toilet colour
+			SDL_SetRenderDrawColor(renderer, 255, 153, 0, 255);
+			break;
+		default:
+			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+			break;
+		}
+	}
+	else
+	{
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+	}
+	SDL_RenderFillRect(renderer, &currentTask);
+	SDL_RenderDrawRect(renderer, &currentTask);
+
 	cyd.renderNeedBars(renderer);
 
 	SDL_SetRenderDrawColor(renderer, 240, 38, 131, 255);
@@ -179,6 +312,7 @@ void CydGame::updateActiveGameObjects()
 
 void CydGame::start()
 {
+	uiManager.inputHandler = &inputHandler;
 	createTheGraph();
 	loadLevel(level.house);
 	cyd.offsetX = offsetX;
@@ -187,6 +321,22 @@ void CydGame::start()
 	cyd.roomAlg.levelKnowledge = &cyd.levelKnowledge;
 	cyd.roomAlg.currentPosition = &cyd.arrayPosition;
 	cyd.roomAlg.targetPosition = &cyd.targetPosition;
+
+
+	for (auto e : rooms)
+	{
+		if (e.id == 201)
+		{
+			cyd.knownRooms.push_back(e);
+		}
+		cout << "\n" << e.id;
+		for (auto e1 : e.containedObjects)
+		{
+			cout << " " << e1.getName();
+		}
+		cout << endl;
+	}
+	
 }
 
 void CydGame::createNewGameObject(string name, int x, int y, int w, int h)
@@ -218,13 +368,10 @@ void CydGame::loadLevel(int levelArray[60][60])
 				obj.rect.y = i * 10;
 				objects.push_back(obj);
 
-
 				for (auto& element : rooms)
 				{
-
 					if (element.id == level.rooms[i][j])
 					{
-
 						element.containedObjects.push_back(obj);
 						break;
 					}
@@ -408,5 +555,6 @@ void CydGame::createTheGraph()
 	cyd.levelKnowledge.addVertex(201);
 	cyd.levelKnowledge.CopyVertices(201, thisGraph.GetGraph());
 	cyd.levelKnowledge.createANewSpace(201, cyd.arrayPosition);
+
 	
 }

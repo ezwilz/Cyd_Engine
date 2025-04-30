@@ -22,7 +22,7 @@ GameObject::GameObject(int i, int t, Vector2D l)
 		affectsSleep = false;
 		affectsHygiene = false;
 
-		hungerModifier = -20;
+		hungerModifier = -30;
 		bladderModifier = 3;
 
 		duration = 2500;
@@ -41,9 +41,9 @@ GameObject::GameObject(int i, int t, Vector2D l)
 
 
 
-		duration = 10000;
+		duration = 5000;
 		
-		sleepModifier = -30;
+		sleepModifier = -20;
 		break;
 	case 30:
 		cout << "\nShower Spawned\n";
@@ -56,16 +56,16 @@ GameObject::GameObject(int i, int t, Vector2D l)
 		affectsBladder = false;
 		affectsSleep = false;
 
-		duration = 5000;
+		duration = 2000;
 
-		hygieneModifer = -10;
+		hygieneModifer = -40;
 		break;
 	case 40:
 		cout << "\nToilet Spawned\n";
 
 		setName("Toilet");
 
-		duration = 2500;
+		duration = 1000;
 
 		affectsBladder = true;
 
@@ -73,7 +73,39 @@ GameObject::GameObject(int i, int t, Vector2D l)
 		affectsSleep = false;
 		affectsHygiene = false;
 
-		bladderModifier = -5;
+		bladderModifier = -90;
+		break;
+	case 50: 
+		cout << "\nFun Object Type 1 Spawned\n";
+
+		setName("Fun Object Type 1");
+
+		duration = 1000;
+
+		funModifier = -90;
+		affectsFun = true;
+
+		affectsBladder = false;
+		affectsHunger = false;
+		affectsSleep = false;
+		affectsHygiene = false;
+
+		break;
+	case 60:
+		cout << "\nFun Object Type 2 Spawned\n";
+
+		setName("Fun Object Type 2");
+
+		duration = 1000;
+
+		funModifier = -90;
+		affectsFun = true;
+
+		affectsBladder = false;
+		affectsHunger = false;
+		affectsSleep = false;
+		affectsHygiene = false;
+
 		break;
 	default:
 		break;
