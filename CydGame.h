@@ -38,6 +38,7 @@ public:
 	SDL_Rect currentTask = { appWidth - 60, appHeight - 60, 50,50 };
 
 	CharacterBehaviour cyd;
+	CharacterBehaviour murphy;
 
 	int idTemplate = 500;
 	vector<Room> rooms;

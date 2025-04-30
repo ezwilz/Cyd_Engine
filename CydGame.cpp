@@ -21,12 +21,24 @@ void CydGame::update()
 		inputHandler.handleEvent(eventSDL);
 
 		if (inputHandler.leftMBDown)
-			leftClickAction();
+		{
+			if (level.house[lClickArrayPosY][lClickArrayPosX] == 0)
+			{
+				if (lClickArrayPosX < 60 && lClickArrayPosX > 0 && lClickArrayPosY < 60 && lClickArrayPosY > 0)
+				{
+					murphy.targetPosition = Vector2D(lClickArrayPosX, lClickArrayPosY);
+					murphy.pathSet = false;
+
+					cout << "Setting murphys target\n";
+				}
+			}
+		}
 		if (uiManager.button1Clicked)
 		{
 			button1Pressed();
 		}
-		else if (inputHandler.rightMBDown)
+
+		if (inputHandler.rightMBDown)
 		{
 
 			for (auto e : cyd.knownRooms)
@@ -74,7 +86,11 @@ void CydGame::update()
 		cyd.offsetX = offsetX;
 		cyd.offsetY = offsetY;
 
+		murphy.offsetX = offsetX;
+		murphy.offsetY = offsetY;
+
 		cyd.update(thisGraph.GetGraph(),&rooms);
+		murphy.update(thisGraph.GetGraph(),&rooms);
 	}
 
 	if (collisionChecker.checkAABBCollision(currentTask.x, currentTask.y, currentTask.w, currentTask.h, inputHandler.getMouseX(), inputHandler.getMouseY(), 5, 5))
@@ -295,6 +311,10 @@ void CydGame::scene1(SDL_Renderer* renderer)
 	SDL_SetRenderDrawColor(renderer, 240, 38, 131, 255);
 	SDL_RenderFillRect(renderer, &cyd.sprite);
 	SDL_RenderDrawRect(renderer, &cyd.sprite);
+
+	SDL_SetRenderDrawColor(renderer, 240, 38, 131, 255);
+	SDL_RenderFillRect(renderer, &murphy.sprite);
+	SDL_RenderDrawRect(renderer, &murphy.sprite);
 }
 
 void CydGame::pauseScreen(SDL_Renderer* renderer)
@@ -317,10 +337,16 @@ void CydGame::start()
 	loadLevel(level.house);
 	cyd.offsetX = offsetX;
 	cyd.offsetY = offsetY;
+	murphy.offsetX = offsetX;
+	murphy.offsetY = offsetY;
 	locateAllDoors(level.rooms);
 	cyd.roomAlg.levelKnowledge = &cyd.levelKnowledge;
 	cyd.roomAlg.currentPosition = &cyd.arrayPosition;
 	cyd.roomAlg.targetPosition = &cyd.targetPosition;
+
+	murphy.roomAlg.levelKnowledge = &murphy.levelKnowledge;
+	murphy.roomAlg.currentPosition = &murphy.arrayPosition;
+	murphy.roomAlg.targetPosition = &murphy.targetPosition;
 
 
 	for (auto e : rooms)
@@ -329,6 +355,10 @@ void CydGame::start()
 		{
 			cyd.knownRooms.push_back(e);
 		}
+		/*if (e.id == 202)
+		{
+			murphy.knownRooms.push_back(e);
+		}*/
 		cout << "\n" << e.id;
 		for (auto e1 : e.containedObjects)
 		{
@@ -337,6 +367,19 @@ void CydGame::start()
 		cout << endl;
 	}
 	
+
+	//murphy.levelKnowledge.m_graph = thisGraph.m_graph;
+	murphy.knownRooms = rooms;
+
+	for (auto e : murphy.knownRooms)
+	{
+		cout << "\n Murphy's List: " << e.id;
+		for (auto e1 : e.containedObjects)
+		{
+			cout << " " << e1.getName();
+		}
+		cout << endl;
+	}
 }
 
 void CydGame::createNewGameObject(string name, int x, int y, int w, int h)
@@ -359,6 +402,13 @@ void CydGame::loadLevel(int levelArray[60][60])
 				cyd.arrayPosition.x = j;
 				cyd.arrayPosition.y = i;
 				cyd.currentPosition = Vector2D(j * 10, i * 10);
+			}
+			if(levelArray[i][j] == 7)
+			{
+				murphy.sprite = { j * 10,i * 10, 10,10 };
+				murphy.arrayPosition.x = j;
+				murphy.arrayPosition.y = i;
+				murphy.currentPosition = Vector2D(j * 10, i * 10);
 			}
 			if (levelArray[i][j] > 9)
 			{
@@ -388,6 +438,7 @@ void CydGame::locateAllDoors(int level[60][60])
 			if (level[i][j] > 100 && level[i][j] < 200)
 			{
 				cyd.roomAlg.createNewDoor(level[i][j], Vector2D(j, i));
+				murphy.roomAlg.createNewDoor(level[i][j], Vector2D(j, i));
 			}
 		}
 	}
@@ -411,6 +462,12 @@ void CydGame::moveMap(int x, int y, list<SDL_Rect>& rects, vector<GameObject>& o
 	cyd.offsetY = offsetY;
 	cyd.sprite.x += x;
 	cyd.sprite.y += y;
+
+
+	murphy.offsetX = offsetX;
+	murphy.offsetY = offsetY;
+	murphy.sprite.x += x;
+	murphy.sprite.y += y;
 }
 
 void CydGame::moveTestDummy()
@@ -555,6 +612,19 @@ void CydGame::createTheGraph()
 	cyd.levelKnowledge.addVertex(201);
 	cyd.levelKnowledge.CopyVertices(201, thisGraph.GetGraph());
 	cyd.levelKnowledge.createANewSpace(201, cyd.arrayPosition);
+
+	murphy.levelKnowledge.addVertex(202);
+	murphy.levelKnowledge.CopyVertices(202, thisGraph.GetGraph());
+	murphy.levelKnowledge.createANewSpace(202, murphy.arrayPosition);
+
+	murphy.levelKnowledge.CopyVertices(201, thisGraph.m_graph);
+	murphy.levelKnowledge.CopyVertices(203, thisGraph.m_graph);
+	murphy.levelKnowledge.CopyVertices(204, thisGraph.m_graph);
+	murphy.levelKnowledge.CopyVertices(205, thisGraph.m_graph);
+	murphy.levelKnowledge.CopyVertices(206, thisGraph.m_graph);
+	murphy.levelKnowledge.CopyVertices(207, thisGraph.m_graph);
+
+	
 
 	
 }
