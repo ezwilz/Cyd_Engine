@@ -20,23 +20,6 @@ void CydGame::update()
 		handleMapControl();
 		inputHandler.handleEvent(eventSDL);
 
-		if (inputHandler.leftMBDown)
-		{
-			if (level.house[lClickArrayPosY][lClickArrayPosX] == 0)
-			{
-				if (lClickArrayPosX < 60 && lClickArrayPosX > 0 && lClickArrayPosY < 60 && lClickArrayPosY > 0)
-				{
-					murphy.targetPosition = Vector2D(lClickArrayPosX, lClickArrayPosY);
-					murphy.pathSet = false;
-
-					cout << "Setting murphys target\n";
-				}
-			}
-		}
-		if (uiManager.button1Clicked)
-		{
-			button1Pressed();
-		}
 
 		if (inputHandler.rightMBDown)
 		{
