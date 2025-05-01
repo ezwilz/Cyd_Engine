@@ -3,7 +3,7 @@
 
 bool UI::mouseHoveringButton(SDL_Rect* button)
 {
-	return collision.checkAABBCollision(inputHandler.getMouseX(), inputHandler.getMouseY(), 1, 1, button->x, button->y, button->w, button->h);
+	return collision.checkAABBCollision(inputHandler->getMouseX(), inputHandler->getMouseY(), 1, 1, button->x, button->y, button->w, button->h);
 }
 
 void UI::renderUI(SDL_Renderer* renderer, int x, int y)
@@ -24,14 +24,11 @@ void UI::renderUI(SDL_Renderer* renderer, int x, int y)
 		if (mouseHoveringButton(&button1))
 		{//red when hovering
 			SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-			if (inputHandler.GetInput().button.button == SDL_BUTTON_LEFT)
+			if (inputHandler->leftMBDown)
 			{
 				button1Clicked = true;
 			}
-			else
-			{
-				button1Clicked = false;
-			}
+			
 		}
 		else
 		{//blue when not hovering 

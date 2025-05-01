@@ -42,12 +42,15 @@ private:
 	Node finalNode = Node(Vector2D(-1,-1), Vector2D(-1, -1),0,0);
 	Node currentNode = Node(Vector2D(-1, -1), Vector2D(-1, -1), 0, 0);
 	Node startNode = Node(Vector2D(-1, -1), Vector2D(-1, -1), 0, 0);
-	
-
 
 	LevelMap level;
 public:
 	double smallestCost = 1000000000000;
+
+	int iterationCount = 0;
+	const int maxIterationCount = 1000;
+
+	bool pathFindingCancelled = false;
 
 	vector<Node*> openList, closedList;
 	vector<Node*> pathList;

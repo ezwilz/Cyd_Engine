@@ -11,7 +11,7 @@ class UI
 public:
 
 	AabbCollision collision;
-	InputHandler inputHandler;
+	InputHandler* inputHandler;
 
 	SDL_Rect window = {0,0,80,40};
 	SDL_Rect button1 = { 0,0,70,30 };

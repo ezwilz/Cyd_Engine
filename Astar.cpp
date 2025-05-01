@@ -147,6 +147,8 @@ void Astar::getAllNeighbours( int rows, int cols) {
         int newY = currentNode.position.y + directionY[i];
         cout << "\nGettingDirectional\n";
 
+       // searchLoop += 1;
+
         if (newX >= 0 && newX < rows && newY >= 0 && newY < cols) {
             cout << "\nCheckingItsOntheBoard\n";
             if (level.house[newY][newX] == 0)
@@ -253,6 +255,14 @@ void Astar::search(int currX, int currY, int tarX, int tarY)
             getAllNeighbours(60, 60);
             while (!openList.empty()) {
 
+                if (iterationCount > maxIterationCount)
+                {
+                    searching = false;
+                    openList.clear();
+                    closedList.clear();
+                    pathList.clear();
+;                   break;
+                }
                 if (!CheckForTargetInClosed())
                 {
                     cout << (CheckForTargetInClosed());
@@ -262,7 +272,7 @@ void Astar::search(int currX, int currY, int tarX, int tarY)
                     checkOpenList();
                     cout << "\nCheckingForTheFinalNode\n";
                     // if the final Node hsa been set, it means it is on the closed list
-
+                    iterationCount += 1;
                 }
                 else if (CheckForTargetInClosed())
                 {
@@ -275,7 +285,16 @@ void Astar::search(int currX, int currY, int tarX, int tarY)
             cout << "\nWhileLoopBroken\n";
             
         }
-        buildPath();
+        if (iterationCount < 1000)
+        {
+            buildPath();
+        }
+        else
+        {
+            cout << "PathFinding Cancelled - f to t" << endl;
+            pathFindingCancelled = true;
+        }
+        iterationCount = 0;
 
         /*for (int i = 0; i < pathList.size(); i++)
         {

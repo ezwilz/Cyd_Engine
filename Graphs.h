@@ -7,18 +7,19 @@
 #include <list>
 #include "LevelMap.h"
 #include "Vector2D.h"
+#include <unordered_map>
+#include <chrono>
+#include <queue>
 
 using namespace std;
 
 class Graphs
 {
 private:
-	map<int, vector<int>> m_graph;
+	
 	list<int> knownVertices;
 
 	LevelMap level;
-
-
 	struct Space {
 		Vector2D position = Vector2D(-1,-1);
 		double iD = 0;
@@ -27,9 +28,9 @@ private:
 			: iD(id), position(pos) {
 		}
 	};
-
-
 public:
+	map<int, vector<int>> m_graph;
+
 	vector<Space> roomsNDoorsList;
 
 	Graphs() {}
@@ -48,9 +49,6 @@ public:
 	map<int, vector<int>>  GetGraph();
 	void CopyVertices(int vertex, map<int, vector<int>> graphOG);
 	int MovingThroughDoor(int curr, int last, map<int, vector<int>>  graphOG);
-
-
-	
 
 	void createANewSpace(double i, Vector2D p);
 

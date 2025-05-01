@@ -191,68 +191,66 @@ bool Graphs::CheckForConnection(int a, int b)
 vector<int> Graphs::returnPath(int currentVertex, int targetVertex)
 {
 	vector<int> path;
-	vector<int> checkedVertices;
 	if (currentVertex == targetVertex)
 		return path;
 
-	for (const auto& edge : m_graph[currentVertex])
+	unordered_map<int, int> parent;
+	unordered_map<int, bool> visited;
+	queue<int> q;
+
+	// Timing setup
+	const double baseTimeMs = 50.0;
+	const double alpha = 20.0;
+	double T_max = baseTimeMs + alpha * log(m_graph.size());
+
+	auto start = chrono::high_resolution_clock::now();
+
+	q.push(currentVertex);
+	visited[currentVertex] = true;
+
+	while (!q.empty())
 	{
-		if (edge == targetVertex)
+		auto now = chrono::high_resolution_clock::now();
+		auto elapsed = chrono::duration_cast<chrono::milliseconds>(now - start).count();
+		if (elapsed > T_max)
 		{
-			path.push_back(edge);
-			return path;
+			cout << "Search timed out\n";
+			return {};
 		}
-		for (const auto& edge2 : m_graph[edge])
+
+		int vertex = q.front();
+		q.pop();
+
+		for (int neighbor : m_graph[vertex])
 		{
-			if (edge2 == targetVertex)
+			if (!visited[neighbor])
 			{
-				if (edge2 != currentVertex)
-				{
-					cout << "Path: " << edge << ", " << edge2 << "\n";
-					path.push_back(edge2);
-					path.push_back(edge);
-					return path;
-				}
-			}
+				parent[neighbor] = vertex;
+				visited[neighbor] = true;
 
-			for (const auto& edge3 : m_graph[edge2])
-			{
-				if (edge3 == targetVertex)
+				if (neighbor == targetVertex)
 				{
-					if (edge2 != currentVertex)
+					vector<int> resultPath;
+					int current = targetVertex;
+					while (current != currentVertex)
 					{
-						cout << "Path: " << edge << ", " << edge2 << ", " << edge3 << "\n";
-						
-						path.push_back(edge3);
-						path.push_back(edge2);
-						path.push_back(edge);
-						
-						return path;
+						resultPath.insert(resultPath.begin(), current);
+						current = parent[current];
 					}
+					cout << "Path: ";
+					for (int v : resultPath) cout << v << " ";
+					cout << "\n";
+					reverse(resultPath.begin(), resultPath.end());
+					return resultPath;
 				}
 
-				for (const auto& edge4 : m_graph[edge3])
-				{
-					if (edge4 == targetVertex)
-					{
-						if (edge2 != currentVertex)
-						{
-							cout << "Path: " << edge << ", " << edge2 << ", " << edge3 << ", " << edge4 << "\n";
-							path.push_back(edge4);
-							path.push_back(edge3);
-							path.push_back(edge2);
-							path.push_back(edge);
-							
-							return path;
-						}
-					}
-				}
+				q.push(neighbor);
 			}
 		}
 	}
 
-	printf("Path Not Found \n");
-	return path;
+	cout << "Path Not Found\n";
+	return {};
 }
 
 bool Graphs::CheckForVertexPresence(int x)

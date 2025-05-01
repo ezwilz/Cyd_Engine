@@ -43,44 +43,63 @@ SDL_Event InputHandler::GetInput()
 
 void InputHandler :: handleEvent(SDL_Event& event)
 {
-	leftMBDown = false;
-	rightMBDown = false;
 	switch (event.type)
 	{
 	case SDL_MOUSEBUTTONDOWN:
 		if (event.button.button == SDL_BUTTON_LEFT)
 		{
-			//cout << "\n\nLeft Clicked Through the Switch\n\nAt :" << getMousePosition().x  << " , " << getMousePosition().y;
 			leftMBDown = true;
 		}
 		else if (event.button.button == SDL_BUTTON_RIGHT)
 		{
-			//cout << "\n\nRight Clicked Through the Switch\n\nAt :" << getMousePosition().x << " , " << getMousePosition().y;
 			rightMBDown = true;
 		}
 		break;
+
+	case SDL_MOUSEBUTTONUP:
+		if (event.button.button == SDL_BUTTON_LEFT)
+		{
+			leftMBDown = false;
+		}
+		else if (event.button.button == SDL_BUTTON_RIGHT)
+		{
+			rightMBDown = false;
+		}
+		break;
+
 	case SDL_QUIT:
 		running = false;
-		printf("Game Ended: Closing Window");
+		printf("Game Ended: Closing Window\n");
 		break;
+
 	case SDL_KEYDOWN:
 		if (event.key.keysym.sym == SDLK_ESCAPE)
 		{
-			if (paused)
-			{
-				paused = false;
-			}
-			else
-			{
-				paused = true;
-			}
+			paused = !paused;
+			std::cout << (paused ? "PAUSED\n" : "UnPAUSED\n");
 		}
 		if (event.key.keysym.sym == SDLK_d)
 		{
 			dPressed = true;
 		}
 		break;
+
+	case SDL_KEYUP:
+		if (event.key.keysym.sym == SDLK_d)
+		{
+			dPressed = false;
+		}
+		break;
+
 	default:
 		break;
+	}
+}
+
+void InputHandler::pollEvent(SDL_Event* event)
+{
+	while (SDL_PollEvent(event))
+	{
+		handleEvent(*event);
 	}
 }
